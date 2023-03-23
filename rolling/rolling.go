@@ -13,9 +13,9 @@ func RollD6(numDice int) int {
 	total := 0
 
 	for i := 0; i < numDice; i++ {
-		total += Random (1, 7)
+		total += Random(1, 7)
 	}
-	
+
 	switch numDice {
 	case 1:
 		if total == 6 {
@@ -40,7 +40,7 @@ func RollD6(numDice int) int {
 	default:
 	}
 
-	return total;
+	return total
 }
 
 func Random(min int, max int) int {

@@ -9,12 +9,12 @@ import (
 )
 
 func main() {
-	myRaceAtt := attributes.BuildDwarf()
-	fmt.Printf("%+v\n", myRaceAtt)
+	myRaceAtt := attributes.BuildHuman()
+	// fmt.Printf("%+v\n", myRaceAtt)
 	var myChar character.Character
 	myChar.Name = "Pat"
 	myChar.Race = myRaceAtt.Name
-	myChar.Lvl = 1
+	myChar.Lvl = 3
 	myChar.IQ = rolling.RollD6Bonus(myRaceAtt.IQ, myRaceAtt.IQBonus)
 	myChar.ME = rolling.RollD6Bonus(myRaceAtt.ME, myRaceAtt.MEBonus)
 	myChar.MA = rolling.RollD6Bonus(myRaceAtt.ME, myRaceAtt.MEBonus)
@@ -23,7 +23,7 @@ func main() {
 	myChar.PE = rolling.RollD6Bonus(myRaceAtt.PE, myRaceAtt.PEBonus)
 	myChar.PB = rolling.RollD6Bonus(myRaceAtt.PB, myRaceAtt.PBBonus)
 	myChar.Spd = rolling.RollD6Bonus(myRaceAtt.Spd, myRaceAtt.SpdBonus)
-	myChar.HP = myChar.PE + rolling.RollD6Bonus(myRaceAtt.HP, myRaceAtt.HPBonus)
+	myChar.HP = myChar.PE + rolling.RollD6Bonus(myChar.Lvl, 0)
 	myChar.PPE = rolling.RollD6Bonus(myRaceAtt.PPE, myRaceAtt.PPEBonus)
 	myChar.SpdDig = rolling.RollD6Bonus(myRaceAtt.SpdDig, myRaceAtt.SpdDigBonus)
 
@@ -41,7 +41,7 @@ func main() {
 	fmt.Printf("HP: %d \n", myChar.HP)
 	fmt.Printf("PPE: %d \n", myChar.PPE)
 
-	isDigger := myRaceAtt.Name == "Dwarf" || myRaceAtt.Name == "Gnome";
+	isDigger := myRaceAtt.Name == "Dwarf" || myRaceAtt.Name == "Gnome"
 	if isDigger {
 		fmt.Printf("Spd Digging: %d \n", myChar.SpdDig)
 	}
