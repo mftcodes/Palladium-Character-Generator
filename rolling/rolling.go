@@ -1,44 +1,46 @@
 package rolling
 
 import (
-	"fmt"
 	"math/rand"
 )
 
-func Roll(dice string, bonus int) int {
-	total := 0;
+func RollD6Bonus(numDice int, bonus int) int {
+	total := RollD6(numDice) + bonus
+	return total
+}
 
-	switch dice {
-		case "1D6":
-			total = Random(1,7)
-			if (total == 6) {
-				total += Random(1,7)
-			}
+func RollD6(numDice int) int {
+	total := 0
 
-		case "2D6":
-			total = Random(1,7) + Random(1,7)
-			if (total >= 11) {
-				total += Random(1,7)
-			}
-
-		case "3D6":
-			total = Random(1,7) + Random(1,7) + Random(1,7)
-			if (total >= 16) {
-				total += Random(1,7)
-			}
-
-		case "4D6":
-			total = Random(1,7) + Random(1,7) + Random(1,7) + Random(1,7)
-			if (total >= 21) {
-				total += Random(1,7)
-			}
-
-		default:
-			fmt.Println("Whoops, bad roll input.")
+	for i := 0; i < numDice; i++ {
+		total += Random (1, 7)
+	}
+	
+	switch numDice {
+	case 1:
+		if total == 6 {
+			total += Random(1, 7)
+		}
+	case 2:
+		if total >= 11 {
+			total += Random(1, 7)
+		}
+	case 3:
+		if total >= 16 {
+			total += Random(1, 7)
+		}
+	case 4:
+		if total >= 21 {
+			total += Random(1, 7)
+		}
+	case 5:
+		if total >= 21 {
+			total += Random(1, 7)
+		}
+	default:
 	}
 
-	total += bonus
-	return total
+	return total;
 }
 
 func Random(min int, max int) int {

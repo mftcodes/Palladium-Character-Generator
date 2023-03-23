@@ -1,133 +1,119 @@
 package attributes
 
 type Race struct {
-	Name      string //
-	IQ        string //  Intelligence Quotient
-	IQBonus   int    //
-	ME        string // Mental Endurance
-	MEBonus   int    //
-	MA        string // Mental Affinity
-	MABonus   int    //
-	PS        string // Physical Strength
-	PSBonus   int    //
-	PP        string // Physical Prowess
-	PPBonus   int    //
-	PE        string // Physical Endurance
-	PEBonus   int    //
-	PB        string // Physical Beauty
-	PBBonus   int    //
-	Spd       string // Speed
-	SpdBonus  int    //
-	HP        string // Hit  Points
-	HPBonus   int    //
-	PPE       string // Potential Psychic  Energy
-	PPEBonus  int    //
-	Alignment string //
+	Name        string //
+	IQ          int //  Intelligence Quotient
+	IQBonus     int    //
+	ME          int // Mental Endurance
+	MEBonus     int    //
+	MA          int // Mental Affinity
+	MABonus     int    //
+	PS          int // Physical Strength
+	PSBonus     int    //
+	PP          int // Physical Prowess
+	PPBonus     int    //
+	PE          int // Physical Endurance
+	PEBonus     int    //
+	PB          int // Physical Beauty
+	PBBonus     int    //
+	Spd         int // Speed
+	SpdBonus    int    //
+	HP          int // Hit  Points
+	HPBonus     int    //
+	PPE         int // Potential Psychic  Energy
+	PPEBonus    int    //
+	Alignment   string //
+	SpdDig      int // Speed Digging
+	SpdDigBonus int    // Speed Digging Bonus
 }
 
 // type Alignment struct {
 //		Could probably do an  enume or dictionary  here?
 // }
 
-type Human struct {
-	Race
-}
-
-func BirthHuman() Human {
-	return Human{
-		Race{
-			"Human",
-			"3D6", // IQ
-			0,     // IQ Bonus
-			"3D6", // ME
-			0,     // ME Bonus
-			"3D6", // MA
-			0,     // MA Bonus
-			"3D6", // PS
-			0,     // PS Bonus
-			"3D6", // PP
-			0,     // PP Bonus
-			"3D6", // PE
-			0,     // PE Bonus
-			"3D6", // PB
-			0,     // PB Bonus
-			"3D6", // Spd
-			0,     // Spd Bonus
-			"1D6", // HP
-			0,     // HP Bonus
-			"2D6", // PPE - Children up to age 18 is 5D6, mage/clergy look to OCC
-			0,     // PPE Bonus
-			"Any, usually lean toward good and selfish",
-		},
+func BuildHuman() Race {
+	return Race{
+		"Human",
+		3, // IQ
+		0,     // IQ Bonus
+		3, // ME
+		0,     // ME Bonus
+		3, // MA
+		0,     // MA Bonus
+		3, // PS
+		0,     // PS Bonus
+		3, // PP
+		0,     // PP Bonus
+		3, // PE
+		0,     // PE Bonus
+		3, // PB
+		0,     // PB Bonus
+		3, // Spd
+		0,     // Spd Bonus
+		1, // HP
+		0,     // HP Bonus
+		2, // PPE - Children up to age 18 is 5D6, mage/clergy look to OCC
+		0,     // PPE Bonus
+		"Any, usually lean toward good and selfish", // Allignment
+		0, // SpdDig
+		0,     // SpdDig Bonus
 	}
 }
 
-type Elf struct {
-	Race
-}
-
-func BirthElf() Elf {
-	return Elf{
-		Race{
-			"Elf",
-			"3D6", // IQ
-			1,     // IQ Bonus
-			"3D6", // ME
-			0,     // ME Bonus
-			"2D6", // MA
-			0,     // MA Bonus
-			"3D6", // PS
-			0,     // PS Bonus
-			"4D6", // PP
-			0,     // PP Bonus
-			"3D6", // PE
-			0,     // PE Bonus
-			"5D6", // PB
-			0,     // PB Bonus
-			"3D6", // Spd
-			0,     // Spd Bonus
-			"1D6", // HP
-			0,     // HP Bonus
-			"2D6", // PPE - Children up to age 18 is 5D6, mage/clergy look to OCC
-			0,     // PPE Bonus
-			"Any, usually lean toward good and selfish",
-		},
+func BuildElf() Race {
+	return Race{
+		"Elf",
+		3, // IQ
+		1,     // IQ Bonus
+		3, // ME
+		0,     // ME Bonus
+		2, // MA
+		0,     // MA Bonus
+		3, // PS
+		0,     // PS Bonus
+		4, // PP
+		0,     // PP Bonus
+		3, // PE
+		0,     // PE Bonus
+		5, // PB
+		0,     // PB Bonus
+		3, // Spd
+		0,     // Spd Bonus
+		1, // HP
+		0,     // HP Bonus
+		2, // PPE - Children up to age 18 is 5D6, mage/clergy look to OCC
+		0,     // PPE Bonus
+		"Any, usually lean toward good and selfish", // Allignment
+		0, // SpdDig
+		0,     // SpdDig Bonus
 	}
 }
 
-type Dwarf struct {
-	Race
-	SpdDig      string // Speed Digging
-	SpdDigBonus int    // Speed Digging Bonus
-}
-
-func BirthDwarf() Dwarf {
-	return Dwarf{
-		Race{
-			"Dwarf",
-			"3D6", // IQ
-			0,     // IQ Bonus
-			"3D6", // ME
-			0,     // ME Bonus
-			"2D6", // MA
-			0,     // MA Bonus
-			"4D6", // PS
-			6,     // PS Bonus
-			"3D6", // PP
-			0,     // PP Bonus
-			"4D6", // PE
-			0,     // PE Bonus
-			"2D6", // PB
-			2,     // PB Bonus
-			"2D6", // Spd
-			0,     // Spd Bonus
-			"1D6", // HP
-			0,     // HP Bonus
-			"2D6", // PPE - Children up to age 18 is 5D6, mage/clergy look to OCC
-			0,     // PPE Bonus
-			"Any, usually lean toward good and selfish",
-		},
-		"1D6",
-		0,
+func BuildDwarf() Race {
+	return Race{
+		"Dwarf",
+		3, // IQ
+		0,     // IQ Bonus
+		3, // ME
+		0,     // ME Bonus
+		2, // MA
+		0,     // MA Bonus
+		4, // PS
+		6,     // PS Bonus
+		3, // PP
+		0,     // PP Bonus
+		4, // PE
+		0,     // PE Bonus
+		2, // PB
+		2,     // PB Bonus
+		2, // Spd
+		0,     // Spd Bonus
+		1, // HP
+		0,     // HP Bonus
+		2, // PPE - Children up to age 18 is 5D6, mage/clergy look to OCC
+		0,     // PPE Bonus
+		"Any, usually lean toward good and selfish", // Allignment
+		1, // SpdDig
+		0,     // SpdDig Bonus
 	}
 }
