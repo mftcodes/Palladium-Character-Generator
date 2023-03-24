@@ -32,14 +32,15 @@ func DbConnect() {
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-	fmt.Println("Connected!")
+	fmt.Println("Connected and ready to begin!\n")
 }
 
 
 func GetRaces() ([]attributes.Race, error) {
 	var races []attributes.Race
+	query := `SELECT * FROM Race`
 
-	rows, err := DB.Query("SELECT * FROM Race")
+	rows, err := DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("racesSelect: %v", err)
 	}
@@ -56,4 +57,29 @@ func GetRaces() ([]attributes.Race, error) {
 		return nil, fmt.Errorf("racesFinal: %v", err)
 	}
 	return races, nil
+}
+
+func GetRaceAttributes(raceId int) (attributes.RaceAttributes, error) {
+	err := DB.Ping()
+	if err != nil {
+		return attributes.RaceAttributes{}, err
+	}
+	
+	var raceAttributes attributes.RaceAttributes
+	query := fmt.Sprintf(`
+		SELECT  ra.*
+		FROM RaceAttributes ra
+		WHERE ra.RaceId =  + %d`, raceId)
+
+	err = DB.QueryRow(query).Scan(&raceAttributes.Id, &raceAttributes.RaceId, &raceAttributes.IQ, &raceAttributes.IQBonus, 
+		&raceAttributes.ME, &raceAttributes.MEBonus, &raceAttributes.MA,  &raceAttributes.MABonus, &raceAttributes.PS, 
+		&raceAttributes.PSBonus, &raceAttributes.PP, &raceAttributes.PPBonus, &raceAttributes.PE, &raceAttributes.PEBonus, 
+		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE, 
+		&raceAttributes.PPEBonus, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
+	if err != nil {
+		return raceAttributes, fmt.Errorf("raceAttributeSeelct: %v", err)
+	}
+
+	// raceAttributes = row
+	return raceAttributes, nil
 }
