@@ -5,8 +5,9 @@ package character
 // }
 
 type Character struct {
+	Id	   int
 	Name   string
-	Race   string
+	RaceId int
 	Lvl    int
 	IQ     int
 	ME     int

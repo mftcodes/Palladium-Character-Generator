@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+  palladium-mysql-db:
+    image: mysql:8.0.32
+    environment:
+      MYSQL_ROOT_PASSWORD: pcg0superfun
+      MYSQL_DATABASE: palladium
+    ports:
+      - "3308:3306"

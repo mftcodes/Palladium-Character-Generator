@@ -1,7 +1,13 @@
 package attributes
 
-type Race struct { // provide majority of base stats
-	Name        string //
+type Race struct {
+	Id	 int
+	Name string
+}
+
+type RaceAttributes struct { // provide majority of base stats
+	Id			int
+	RaceId      int //
 	IQ          int    //  Intelligence Quotient
 	IQBonus     int    //
 	ME          int    // Mental Endurance
@@ -23,12 +29,12 @@ type Race struct { // provide majority of base stats
 	Alignment   string //
 	SpdDig      int    // Speed Digging
 	SpdDigBonus int    // Speed Digging Bonus
-}
+} 
 
 // type Alignment struct {
 //		Could probably do an  enume or dictionary  here?
 // }
-
+/*
 func BuildHuman() Race {
 	return Race{
 		"Human",
@@ -190,3 +196,4 @@ func BuildKobold() Race {
 		0, // SpdDig Bonus
 	}
 }
+*/
