@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"os"
 
 	// "pcg/attributes"
 	"pcg/character"
@@ -13,6 +14,10 @@ import (
 func main() {
 	dbService.DbConnect()
 	races, err := dbService.GetRaces()
+	if err != nil {
+		fmt.Errorf("GettingRacesBombed: %v", err)
+		os.Exit(1)
+	}
 
 	var characterName string
 
@@ -21,12 +26,8 @@ func main() {
 	fmt.Printf("Great! You're new character will be named %s!\n", characterName)
 	fmt.Println("Now please pick a race.")
 
-	if err == nil {
-		for _, race := range races {
-			fmt.Printf("Press %d for %s\n", race.Id, race.Name)
-		}
-	} else {
-		fmt.Println(err)
+	for _, race := range races {
+		fmt.Printf("Press %d for %s\n", race.Id, race.Name)
 	}
 
 	var choice string
@@ -73,4 +74,14 @@ func main() {
 	if isDigger {
 		fmt.Printf("Spd Digging: %d \n", newChar.SpdDig)
 	}
+
+	fmt.Println("Saving Character.")
+	newCharId, err := dbService.SaveCharacter(newChar)
+	if err != nil {
+		fmt.Printf("PPE: %v \n", err)
+		fmt.Errorf("ErrorSavingChar: %v", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("New Character saved with id %d", newCharId)
 }

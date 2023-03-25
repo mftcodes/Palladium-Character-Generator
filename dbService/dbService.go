@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"pcg/attributes"
+	"pcg/character"
 
     "github.com/go-sql-driver/mysql"
 )
@@ -77,9 +78,29 @@ func GetRaceAttributes(raceId int) (attributes.RaceAttributes, error) {
 		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE, 
 		&raceAttributes.PPEBonus, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
 	if err != nil {
-		return raceAttributes, fmt.Errorf("raceAttributeSeelct: %v", err)
+		return raceAttributes, fmt.Errorf("raceAttributeSelect: %v", err)
 	}
 
 	// raceAttributes = row
 	return raceAttributes, nil
+}
+
+func SaveCharacter(newChar character.Character) (int64, error) {
+	query := fmt.Sprintf(`
+		INSERT INTO palladium.Character
+		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, PPE, SpdDig)
+		VALUES('%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d);`,
+		newChar.Name, newChar.RaceId, newChar.Lvl, newChar.IQ, newChar.ME, newChar.MA, newChar.PS, 
+		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.PPE, newChar.SpdDig)
+
+	fmt.Println(query)
+	result, err :=  DB.Exec(query)
+	if err != nil {
+		return 0, fmt.Errorf("newCharInsert: %v", err)
+	}
+    id, err := result.LastInsertId()
+    if err != nil {
+        return 0, fmt.Errorf("newCharLastInsertId: %v", err)
+    }
+    return id, nil
 }

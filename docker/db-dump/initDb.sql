@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `Character` (
   `Id` int not null AUTO_INCREMENT,
   `Name` varchar(25) not null,
   `RaceId` int not null,
-  `Lvl` int not null default 1,
+  `Lvl` smallint not null default 1,
   `IQ` smallint not null default 0,
   `ME` smallint not null default 0,
   `MA` smallint not null default 0,
