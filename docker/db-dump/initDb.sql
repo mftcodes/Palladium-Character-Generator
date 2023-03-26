@@ -74,7 +74,7 @@ ALTER TABLE `Character` ADD FOREIGN KEY (`RaceId`) REFERENCES `Race` (`Id`);
 
 insert into Race (Name)
 values ('Human'), ('Elf'), ('Dwarf'), ('Gnome'), ('Troglodyte'), ('Kobold'), ('Goblin'), 
-	('Hob-Goblin'), ('Orc'), ('Orgre'), ('Troll'), ('Changeling'), ('Wolfen'), ('Coyle');
+	('Hob-Goblin'), ('Orc'), ('Ogre'), ('Troll'), ('Changeling'), ('Wolfen'), ('Coyle');
     
 
 Insert into RaceAttributes (RaceId, IQ, IQBonus, ME, MEBonus, MA, MABonus, PS, PSBonus, PP, PPBonus, PE, PEBonus,

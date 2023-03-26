@@ -1,8 +1,5 @@
 package character
 
-// import {
-// 	"fmt"
-// }
 
 type Character struct {
 	Id	   int

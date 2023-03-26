@@ -11,7 +11,7 @@ func Random(min int, max int) int {
 	return rand.Intn(max-min) + min
 }
 
-func RollAttributes(isHuman bool, sides, numDice, bonus int) int { // isHuman, sides, number, bonus
+func RollAttributes(isHuman bool, sides, numDice, bonus int) int {
 	total := 0
 
 	for i := 1; i <= numDice; i++ {
@@ -41,26 +41,3 @@ func exceptionalRoll(sides int, isHuman bool) int {
 	fmt.Printf("Rolled %d will be added to your attribute.\n", roll)
 	return roll
 }
-
-// This is cool, but overkill. Do not need this much abstraction and flexibility.
-// func RollFlex(diceAttrs ...int) int { // isHuman, sides, number, bonus
-// 	sides := diceAttrs[1]
-// 	numDice := diceAttrs[2]
-// 	bonus := 0
-
-// 	numSides := sides+1
-// 	total := 0
-
-// 	for i := 1; i<= numDice; i++ {
-// 		roll := Random(1, numSides)
-// 		fmt.Printf("roll %d for %d.\n", i, roll)
-// 		total += roll
-// 	}
-
-// 	if len(diceAttrs) == 3 {
-// 		bonus = diceAttrs[2]
-// 		fmt.Printf("bonus of %d will be added\n", bonus)
-// 	}
-
-// 	return total+bonus
-// }

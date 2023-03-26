@@ -22,7 +22,7 @@ func DbConnect() {
 		Addr:   "localhost:3308",
 		DBName: "palladium",
 	}
-	// Get a database handle.
+
 	var err error
 	DB, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
@@ -46,7 +46,7 @@ func GetRaces() ([]attributes.Race, error) {
 		return nil, fmt.Errorf("racesSelect: %v", err)
 	}
 	defer rows.Close()
-	// Loop through rows, using Scan to assign column data to struct fields.
+
 	for rows.Next() {
 		var race attributes.Race
 		if err := rows.Scan(&race.Id, &race.Name); err != nil {
@@ -74,7 +74,6 @@ func GetRaceByName(name string) (attributes.Race, error) {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
 
-	// raceAttributes = row
 	return race, nil
 }
 
@@ -91,8 +90,7 @@ func GetRaceById(id int) (attributes.Race, error) {
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
-
-	// raceAttributes = row
+	
 	return race, nil
 }
 
