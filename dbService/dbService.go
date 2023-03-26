@@ -60,6 +60,42 @@ func GetRaces() ([]attributes.Race, error) {
 	return races, nil
 }
 
+func GetRaceByName(name string) (attributes.Race, error) {
+	err := DB.Ping()
+	if err != nil {
+		return attributes.Race{}, err
+	}
+
+	var race attributes.Race
+	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Name = %s`, name)
+
+	err = DB.QueryRow(query).Scan(&race.Id, &race.Name)
+	if err != nil {
+		return race, fmt.Errorf("raceSelectByName: %v", err)
+	}
+
+	// raceAttributes = row
+	return race, nil
+}
+
+func GetRaceById(id int) (attributes.Race, error) {
+	err := DB.Ping()
+	if err != nil {
+		return attributes.Race{}, err
+	}
+
+	var race attributes.Race
+	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Id = %d`, id)
+
+	err = DB.QueryRow(query).Scan(&race.Id, &race.Name)
+	if err != nil {
+		return race, fmt.Errorf("raceSelectByName: %v", err)
+	}
+
+	// raceAttributes = row
+	return race, nil
+}
+
 func GetRaceAttributes(raceId int) (attributes.RaceAttributes, error) {
 	err := DB.Ping()
 	if err != nil {
@@ -81,7 +117,6 @@ func GetRaceAttributes(raceId int) (attributes.RaceAttributes, error) {
 		return raceAttributes, fmt.Errorf("raceAttributeSelect: %v", err)
 	}
 
-	// raceAttributes = row
 	return raceAttributes, nil
 }
 

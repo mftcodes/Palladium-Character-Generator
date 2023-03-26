@@ -2,24 +2,26 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"os"
+	"strconv"
 
-	// "pcg/attributes"
 	"pcg/character"
-	"pcg/rolling"
 	"pcg/dbService"
+	"pcg/rolling"
 )
 
 func main() {
 	dbService.DbConnect()
+
+	var characterName string
+	d6 := 6
+	d4 := 4
+
 	races, err := dbService.GetRaces()
 	if err != nil {
 		fmt.Errorf("GettingRacesBombed: %v", err)
 		os.Exit(1)
 	}
-
-	var characterName string
 
 	fmt.Println("Let's start by building a character! First please type in a name.")
 	fmt.Scanln(&characterName)
@@ -34,30 +36,62 @@ func main() {
 	fmt.Scanln(&choice)
 
 	choiceNum, _ := strconv.Atoi(choice)
-	raceId := choiceNum-1
-	fmt.Printf("You chose %d to build a %s\n", choiceNum, races[raceId].Name)
+	isHuman := choiceNum == 1
+	isHobGoblin := choiceNum == 8
+	fmt.Printf("You chose %d to build a %s\n", choiceNum, races[choiceNum-1].Name)
 
-	raceAttributes, err := dbService.GetRaceAttributes(choiceNum - 1)
+	raceAttributes, err := dbService.GetRaceAttributes(choiceNum)
 	//fmt.Printf("%+v\n", raceAttributes)
+
+	fmt.Printf("What level do you want to start at? (Typically 1, 2, or 3)\n")
+	var levelChoice string
+	fmt.Scanln(&levelChoice)
+	level, _ := strconv.Atoi(levelChoice)
 
 	var newChar character.Character
 	newChar.Name = characterName
-	newChar.RaceId = raceId
-	newChar.Lvl = 3
-	newChar.IQ = rolling.RollD6Bonus(raceAttributes.IQ, raceAttributes.IQBonus)
-	newChar.ME = rolling.RollD6Bonus(raceAttributes.ME, raceAttributes.MEBonus)
-	newChar.MA = rolling.RollD6Bonus(raceAttributes.ME, raceAttributes.MEBonus)
-	newChar.PS = rolling.RollD6Bonus(raceAttributes.PS, raceAttributes.PSBonus)
-	newChar.PP = rolling.RollD6Bonus(raceAttributes.PP, raceAttributes.PPBonus)
-	newChar.PE = rolling.RollD6Bonus(raceAttributes.PE, raceAttributes.PEBonus)
-	newChar.PB = rolling.RollD6Bonus(raceAttributes.PB, raceAttributes.PBBonus)
-	newChar.Spd = rolling.RollD6Bonus(raceAttributes.Spd, raceAttributes.SpdBonus)
-	newChar.HP = newChar.PE + rolling.RollD6Bonus(newChar.Lvl, 0)
-	newChar.PPE = rolling.RollD6Bonus(raceAttributes.PPE, raceAttributes.PPEBonus)
-	newChar.SpdDig = rolling.RollD6Bonus(raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
+	newChar.RaceId = choiceNum
+	newChar.Lvl = level
+	fmt.Printf("\nRolling for IQ with %dD6, with bonus of +%d\n", raceAttributes.IQ, raceAttributes.IQBonus)
+	newChar.IQ = rolling.RollAttributes(isHuman, d6, raceAttributes.IQ, raceAttributes.IQBonus)
 
-	fmt.Printf("Name: %s \n", newChar.Name)
-	fmt.Printf("Race: %s \n", races[raceId].Name)
+	fmt.Printf("\nRolling for ME with %dD6, with bonus of +%d\n", raceAttributes.ME, raceAttributes.MEBonus)
+	newChar.ME = rolling.RollAttributes(isHuman, d6, raceAttributes.ME, raceAttributes.MEBonus)
+
+	fmt.Printf("\nRolling for MA with %dD6, with bonus of +%d\n", raceAttributes.MA, raceAttributes.MABonus)
+	newChar.MA = rolling.RollAttributes(isHuman, d6, raceAttributes.MA, raceAttributes.MABonus)
+
+	fmt.Printf("\nRolling for PS with %dD6, with bonus of +%d\n", raceAttributes.PS, raceAttributes.PSBonus)
+	newChar.PS = rolling.RollAttributes(isHuman, d6, raceAttributes.PS, raceAttributes.PSBonus)
+
+	fmt.Printf("\nRolling for PP with %dD6, with bonus of +%d\n", raceAttributes.PP, raceAttributes.PPBonus)
+	newChar.PP = rolling.RollAttributes(isHuman, d6, raceAttributes.PP, raceAttributes.PPBonus)
+
+	fmt.Printf("\nRolling for PE with %dD6, with bonus of +%d\n", raceAttributes.PE, raceAttributes.PEBonus)
+	newChar.PE = rolling.RollAttributes(isHuman, d6, raceAttributes.PE, raceAttributes.PEBonus)
+
+	fmt.Printf("\nRolling for PB with %dD6, with bonus of +%d\n", raceAttributes.PB, raceAttributes.PBBonus)
+	newChar.PB = rolling.RollAttributes(isHuman, d6, raceAttributes.PB, raceAttributes.PBBonus)
+
+	fmt.Printf("\nRolling for Spd with %dD6, with bonus of +%d\n", raceAttributes.Spd, raceAttributes.SpdBonus)
+	newChar.Spd = rolling.RollAttributes(isHuman, d6, raceAttributes.Spd, raceAttributes.SpdBonus)
+
+	fmt.Printf("\nRolling for HP with %dD6, with bonus of +%d\n", newChar.Lvl, 0)
+	newChar.HP = newChar.PE + rolling.RollAttributes(isHuman, d6, newChar.Lvl, 0)
+
+	fmt.Printf("\nRolling for PPE with %dD6, with bonus of +%d\n", raceAttributes.PPE, raceAttributes.PPEBonus)
+	newChar.PPE = rolling.RollAttributes(isHuman, d6, raceAttributes.PPE, raceAttributes.PPEBonus)
+	
+	if isHobGoblin {
+		fmt.Printf("\nRolling for Spd Digging with %dD4, with bonus of +%d\n", raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
+		newChar.SpdDig = rolling.RollAttributes(isHuman, d4, raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
+	} else {
+		fmt.Printf("\nRolling for Spd Digging with %dD6, with bonus of +%d\n", raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
+		newChar.SpdDig = rolling.RollAttributes(isHuman, d6, raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
+	}
+
+	fmt.Printf("\n\nName: %s \n", newChar.Name)
+	fmt.Printf("Race: %s \n", races[choiceNum-1].Name)
 	fmt.Printf("Level: %d \n", newChar.Lvl)
 	fmt.Printf("IQ: %d \n", newChar.IQ)
 	fmt.Printf("ME: %d \n", newChar.ME)
@@ -70,7 +104,7 @@ func main() {
 	fmt.Printf("HP: %d \n", newChar.HP)
 	fmt.Printf("PPE: %d \n", newChar.PPE)
 
-	isDigger := raceId == 3 || raceId == 4
+	isDigger := choiceNum >= 3 && choiceNum <= 8
 	if isDigger {
 		fmt.Printf("Spd Digging: %d \n", newChar.SpdDig)
 	}
