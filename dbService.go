@@ -57,7 +57,7 @@ func getRaces() ([]race, error) {
 	return races, nil
 }
 
-func GetRaceByName(name string) (race, error) {
+func getRaceByName(name string) (race, error) {
 	err := db.Ping()
 	if err != nil {
 		return race{}, err
