@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-    "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB
@@ -32,7 +32,6 @@ func dbConnect() {
 	}
 	fmt.Println("Connected and ready to begin!\n")
 }
-
 
 func getRaces() ([]race, error) {
 	var races []race
@@ -87,7 +86,7 @@ func getRaceById(id int) (race, error) {
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
-	
+
 	return race, nil
 }
 
@@ -96,17 +95,17 @@ func getRaceAttributes(raceId int) (raceAttributes, error) {
 	if err != nil {
 		return raceAttributes{}, err
 	}
-	
+
 	var raceAttributes raceAttributes
 	query := fmt.Sprintf(`
 		SELECT  ra.*
 		FROM RaceAttributes ra
 		WHERE ra.RaceId =  + %d`, raceId)
 
-	err = db.QueryRow(query).Scan(&raceAttributes.Id, &raceAttributes.RaceId, &raceAttributes.IQ, &raceAttributes.IQBonus, 
-		&raceAttributes.ME, &raceAttributes.MEBonus, &raceAttributes.MA,  &raceAttributes.MABonus, &raceAttributes.PS, 
-		&raceAttributes.PSBonus, &raceAttributes.PP, &raceAttributes.PPBonus, &raceAttributes.PE, &raceAttributes.PEBonus, 
-		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE, 
+	err = db.QueryRow(query).Scan(&raceAttributes.Id, &raceAttributes.RaceId, &raceAttributes.IQ, &raceAttributes.IQBonus,
+		&raceAttributes.ME, &raceAttributes.MEBonus, &raceAttributes.MA, &raceAttributes.MABonus, &raceAttributes.PS,
+		&raceAttributes.PSBonus, &raceAttributes.PP, &raceAttributes.PPBonus, &raceAttributes.PE, &raceAttributes.PEBonus,
+		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE,
 		&raceAttributes.PPEBonus, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
 	if err != nil {
 		return raceAttributes, fmt.Errorf("raceAttributeSelect: %v", err)
@@ -120,17 +119,17 @@ func saveCharacter(newChar character) (int64, error) {
 		INSERT INTO palladium.Character
 		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, PPE, SpdDig)
 		VALUES('%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d);`,
-		newChar.Name, newChar.RaceId, newChar.Lvl, newChar.IQ, newChar.ME, newChar.MA, newChar.PS, 
+		newChar.Name, newChar.RaceId, newChar.Lvl, newChar.IQ, newChar.ME, newChar.MA, newChar.PS,
 		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.PPE, newChar.SpdDig)
 
 	fmt.Println(query)
-	result, err :=  db.Exec(query)
+	result, err := db.Exec(query)
 	if err != nil {
 		return 0, fmt.Errorf("newCharInsert: %v", err)
 	}
-    id, err := result.LastInsertId()
-    if err != nil {
-        return 0, fmt.Errorf("newCharLastInsertId: %v", err)
-    }
-    return id, nil
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("newCharLastInsertId: %v", err)
+	}
+	return id, nil
 }

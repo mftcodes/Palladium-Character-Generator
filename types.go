@@ -1,13 +1,13 @@
 package main
 
 type race struct {
-	Id	 int
+	Id   int
 	Name string
 }
 
 type raceAttributes struct { // provide majority of base stats
-	Id			int
-	RaceId      int //
+	Id          int
+	RaceId      int    //
 	IQ          int    //  Intelligence Quotient
 	IQBonus     int    //
 	ME          int    // Mental Endurance
@@ -29,10 +29,10 @@ type raceAttributes struct { // provide majority of base stats
 	Alignment   string //
 	SpdDig      int    // Speed Digging
 	SpdDigBonus int    // Speed Digging Bonus
-} 
+}
 
 type character struct {
-	Id	   int
+	Id     int
 	Name   string
 	RaceId int
 	Lvl    int
