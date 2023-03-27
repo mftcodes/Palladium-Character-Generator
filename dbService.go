@@ -1,19 +1,16 @@
-package dbService
+package main
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
 
-	"pcg/attributes"
-	"pcg/character"
-
     "github.com/go-sql-driver/mysql"
 )
 
-var DB *sql.DB
+var db *sql.DB
 
-func DbConnect() {
+func dbConnect() {
 	fmt.Println("Connecting to Db")
 	cfg := mysql.Config{
 		User:   "root",
@@ -24,12 +21,12 @@ func DbConnect() {
 	}
 
 	var err error
-	DB, err = sql.Open("mysql", cfg.FormatDSN())
+	db, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pingErr := DB.Ping()
+	pingErr := db.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
@@ -37,18 +34,18 @@ func DbConnect() {
 }
 
 
-func GetRaces() ([]attributes.Race, error) {
-	var races []attributes.Race
+func getRaces() ([]race, error) {
+	var races []race
 	query := `SELECT * FROM Race`
 
-	rows, err := DB.Query(query)
+	rows, err := db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("racesSelect: %v", err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var race attributes.Race
+		var race race
 		if err := rows.Scan(&race.Id, &race.Name); err != nil {
 			return nil, fmt.Errorf("raceScan: %v", err)
 		}
@@ -60,16 +57,16 @@ func GetRaces() ([]attributes.Race, error) {
 	return races, nil
 }
 
-func GetRaceByName(name string) (attributes.Race, error) {
-	err := DB.Ping()
+func GetRaceByName(name string) (race, error) {
+	err := db.Ping()
 	if err != nil {
-		return attributes.Race{}, err
+		return race{}, err
 	}
 
-	var race attributes.Race
+	var race race
 	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Name = %s`, name)
 
-	err = DB.QueryRow(query).Scan(&race.Id, &race.Name)
+	err = db.QueryRow(query).Scan(&race.Id, &race.Name)
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
@@ -77,16 +74,16 @@ func GetRaceByName(name string) (attributes.Race, error) {
 	return race, nil
 }
 
-func GetRaceById(id int) (attributes.Race, error) {
-	err := DB.Ping()
+func getRaceById(id int) (race, error) {
+	err := db.Ping()
 	if err != nil {
-		return attributes.Race{}, err
+		return race{}, err
 	}
 
-	var race attributes.Race
+	var race race
 	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Id = %d`, id)
 
-	err = DB.QueryRow(query).Scan(&race.Id, &race.Name)
+	err = db.QueryRow(query).Scan(&race.Id, &race.Name)
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
@@ -94,19 +91,19 @@ func GetRaceById(id int) (attributes.Race, error) {
 	return race, nil
 }
 
-func GetRaceAttributes(raceId int) (attributes.RaceAttributes, error) {
-	err := DB.Ping()
+func getRaceAttributes(raceId int) (raceAttributes, error) {
+	err := db.Ping()
 	if err != nil {
-		return attributes.RaceAttributes{}, err
+		return raceAttributes{}, err
 	}
 	
-	var raceAttributes attributes.RaceAttributes
+	var raceAttributes raceAttributes
 	query := fmt.Sprintf(`
 		SELECT  ra.*
 		FROM RaceAttributes ra
 		WHERE ra.RaceId =  + %d`, raceId)
 
-	err = DB.QueryRow(query).Scan(&raceAttributes.Id, &raceAttributes.RaceId, &raceAttributes.IQ, &raceAttributes.IQBonus, 
+	err = db.QueryRow(query).Scan(&raceAttributes.Id, &raceAttributes.RaceId, &raceAttributes.IQ, &raceAttributes.IQBonus, 
 		&raceAttributes.ME, &raceAttributes.MEBonus, &raceAttributes.MA,  &raceAttributes.MABonus, &raceAttributes.PS, 
 		&raceAttributes.PSBonus, &raceAttributes.PP, &raceAttributes.PPBonus, &raceAttributes.PE, &raceAttributes.PEBonus, 
 		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE, 
@@ -118,7 +115,7 @@ func GetRaceAttributes(raceId int) (attributes.RaceAttributes, error) {
 	return raceAttributes, nil
 }
 
-func SaveCharacter(newChar character.Character) (int64, error) {
+func saveCharacter(newChar character) (int64, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO palladium.Character
 		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, PPE, SpdDig)
@@ -127,7 +124,7 @@ func SaveCharacter(newChar character.Character) (int64, error) {
 		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.PPE, newChar.SpdDig)
 
 	fmt.Println(query)
-	result, err :=  DB.Exec(query)
+	result, err :=  db.Exec(query)
 	if err != nil {
 		return 0, fmt.Errorf("newCharInsert: %v", err)
 	}

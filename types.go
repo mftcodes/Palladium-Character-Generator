@@ -1,11 +1,11 @@
-package attributes
+package main
 
-type Race struct {
+type race struct {
 	Id	 int
 	Name string
 }
 
-type RaceAttributes struct { // provide majority of base stats
+type raceAttributes struct { // provide majority of base stats
 	Id			int
 	RaceId      int //
 	IQ          int    //  Intelligence Quotient
@@ -30,3 +30,21 @@ type RaceAttributes struct { // provide majority of base stats
 	SpdDig      int    // Speed Digging
 	SpdDigBonus int    // Speed Digging Bonus
 } 
+
+type character struct {
+	Id	   int
+	Name   string
+	RaceId int
+	Lvl    int
+	IQ     int
+	ME     int
+	MA     int
+	PS     int
+	PP     int
+	PE     int
+	PB     int
+	Spd    int
+	HP     int
+	PPE    int
+	SpdDig int
+}
