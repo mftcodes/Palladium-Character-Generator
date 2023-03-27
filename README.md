@@ -1,4 +1,4 @@
-# Palladium-Character-Generator
+# Palladium-Fantasy-Character-Generator
 ## Objective
 Learning the basics and syntax of the Go programming language by creating a console app that builds characters for the Palladium table top RPG. 
 
