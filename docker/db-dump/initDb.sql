@@ -83,7 +83,7 @@ values 	(1,3,0,3,0,3,0,3,0,3,0,3,0,3,0,3,0,2,0,'Any, usually lean toward good an
 		(2,3,1,3,0,2,0,3,0,4,0,3,0,5,0,3,0,2,0,'Any, usually lean toward good and selfish',0,0),
 		(3,3,0,3,0,2,0,4,6,3,0,4,0,2,2,2,0,2,0,'Any, usually lean toward good and selfish',1,0),
 		(4,3,0,1,6,3,4,1,4,4,0,3,6,4,0,2,0,2,0,'Any, but most tend to be good or selfish; an evil gnome is a rarity',1,0),
-		(5,2,0,2,0,3,0,4,4,3,6,3,0,2,0,6,0,2,0,'Any, but most tend to be good or selfish; an evil gnome is a rarity',3,0),
+		(5,2,0,2,0,3,0,4,4,3,6,3,0,2,0,6,0,2,0,'Typically anarchist or evil; but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
 		(6,3,0,2,0,3,0,3,3,3,0,3,0,1,6,3,0,4,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
     (7,2,0,3,0,2,0,3,0,3,6,3,0,2,0,3,0,6,0,'Typically anarchist or evil; but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
     (8,2,0,3,6,2,0,3,0,3,0,3,0,2,0,3,0,4,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
