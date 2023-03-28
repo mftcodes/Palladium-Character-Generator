@@ -9,17 +9,70 @@ import (
 func builder() {
 	dbConnect()
 
-	var characterName string
+	var choice string
 	d6 := 6
 	d4 := 4
 
+	numberCharactersSaved, err := getCharacterCount()
+	if err != nil {
+		fmt.Printf("error getting character count: %v \n", err)
+		fmt.Errorf("characterCount: %v", err)
+		os.Exit(1)
+	}
+
+	if numberCharactersSaved > 0 {
+		fmt.Printf("You have %d characters saved.\n", numberCharactersSaved)
+		fmt.Printf("Type a name to search for a character by name.\n")
+		fmt.Printf("Press 1 to list all characters and select one from the list.\n")
+		fmt.Printf("Press 2 to create a new character.\n")
+	}
+	fmt.Scanln(&choice)
+
+	if choice == "2" {
+		goto buildCharacter
+	} else if choice == "1" {
+		characters, err := getCharacterNames()
+		if err != nil {
+			fmt.Printf("error getting character names: %v \n", err)
+			fmt.Errorf("characterNames: %v", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Here is your list of characters:\n")
+		for _, character := range characters {
+			fmt.Printf("Press %d to see stats for %s\n", character.Id, character.Name)
+		}
+		fmt.Scanln(&choice)
+		charId, _ := strconv.Atoi(choice)
+		character, err := getCharacterById(charId)
+		if err != nil {
+			fmt.Printf("error getting character by id: %v \n", err)
+			fmt.Errorf("characterById: %v", err)
+			os.Exit(1)
+		}
+		fmt.Printf("\nHere are your characters attributes:\n")
+		printCharacter(character)
+		os.Exit(1)
+	} else {
+		character, err := getCharacterByName(choice)
+		if err != nil {
+			fmt.Printf("error getting character by name: %v \n", err)
+			fmt.Errorf("characterByName: %v", err)
+			os.Exit(1)
+		}
+		fmt.Printf("\nHere are your characters attributes:\n")
+		printCharacter(character)
+		os.Exit(1)
+	}
+
+buildCharacter:
 	races, err := getRaces()
 	if err != nil {
 		fmt.Errorf("GettingRacesBombed: %v", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Let's start by building a character! First please type in a name.")
+	var characterName string
+	fmt.Println("Let's building a character! First please type in a name.")
 	fmt.Scanln(&characterName)
 	fmt.Printf("Great! You're new character will be named %s!\n", characterName)
 	fmt.Println("Now please pick a race.")
@@ -27,8 +80,6 @@ func builder() {
 	for _, race := range races {
 		fmt.Printf("Press %d for %s\n", race.Id, race.Name)
 	}
-
-	var choice string
 	fmt.Scanln(&choice)
 
 	choiceNum, _ := strconv.Atoi(choice)
@@ -47,6 +98,7 @@ func builder() {
 	var newChar character
 	newChar.Name = characterName
 	newChar.RaceId = choiceNum
+	newChar.Race = races[choiceNum-1].Name
 	newChar.Lvl = level
 	fmt.Printf("\nRolling for IQ with %dD6, with bonus of +%d\n", raceAttributes.IQ, raceAttributes.IQBonus)
 	newChar.IQ = rollAttributes(isHuman, d6, raceAttributes.IQ, raceAttributes.IQBonus)
@@ -77,7 +129,7 @@ func builder() {
 
 	fmt.Printf("\nRolling for PPE with %dD6, with bonus of +%d\n", raceAttributes.PPE, raceAttributes.PPEBonus)
 	newChar.PPE = rollAttributes(isHuman, d6, raceAttributes.PPE, raceAttributes.PPEBonus)
-	
+
 	if isHobGoblin {
 		fmt.Printf("\nRolling for Spd Digging with %dD4, with bonus of +%d\n", raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
 		newChar.SpdDig = rollAttributes(isHuman, d4, raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
@@ -86,32 +138,37 @@ func builder() {
 		newChar.SpdDig = rollAttributes(isHuman, d6, raceAttributes.SpdDig, raceAttributes.SpdDigBonus)
 	}
 
-	fmt.Printf("\n\nName: %s \n", newChar.Name)
-	fmt.Printf("Race: %s \n", races[choiceNum-1].Name)
-	fmt.Printf("Level: %d \n", newChar.Lvl)
-	fmt.Printf("IQ: %d \n", newChar.IQ)
-	fmt.Printf("ME: %d \n", newChar.ME)
-	fmt.Printf("MA: %d \n", newChar.MA)
-	fmt.Printf("PS: %d \n", newChar.PS)
-	fmt.Printf("PP: %d \n", newChar.PP)
-	fmt.Printf("PE: %d \n", newChar.PE)
-	fmt.Printf("PB: %d \n", newChar.PB)
-	fmt.Printf("Spd: %d \n", newChar.Spd)
-	fmt.Printf("HP: %d \n", newChar.HP)
-	fmt.Printf("PPE: %d \n", newChar.PPE)
-
-	isDigger := choiceNum >= 3 && choiceNum <= 8
-	if isDigger {
-		fmt.Printf("Spd Digging: %d \n", newChar.SpdDig)
-	}
+	fmt.Printf("\n\n")
+	printCharacter(newChar)
 
 	fmt.Println("Saving Character.")
 	newCharId, err := saveCharacter(newChar)
 	if err != nil {
-		fmt.Printf("PPE: %v \n", err)
+		fmt.Printf("Save error: %v \n", err)
 		fmt.Errorf("ErrorSavingChar: %v", err)
 		os.Exit(1)
 	}
 
 	fmt.Printf("New Character saved with id %d\n", newCharId)
+}
+
+func printCharacter(character character) {
+	fmt.Printf("Name: %s \n", character.Name)
+	fmt.Printf("Race: %s \n", character.Race)
+	fmt.Printf("Level: %d \n", character.Lvl)
+	fmt.Printf("IQ: %d \n", character.IQ)
+	fmt.Printf("ME: %d \n", character.ME)
+	fmt.Printf("MA: %d \n", character.MA)
+	fmt.Printf("PS: %d \n", character.PS)
+	fmt.Printf("PP: %d \n", character.PP)
+	fmt.Printf("PE: %d \n", character.PE)
+	fmt.Printf("PB: %d \n", character.PB)
+	fmt.Printf("Spd: %d \n", character.Spd)
+	fmt.Printf("HP: %d \n", character.HP)
+	fmt.Printf("PPE: %d \n", character.PPE)
+
+	isDigger := character.SpdDig != 0
+	if isDigger {
+		fmt.Printf("Spd Digging: %d \n", character.SpdDig)
+	}
 }
