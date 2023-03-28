@@ -35,6 +35,7 @@ type character struct {
 	Id     int
 	Name   string
 	RaceId int
+	Race   string
 	Lvl    int
 	IQ     int
 	ME     int
@@ -47,4 +48,9 @@ type character struct {
 	HP     int
 	PPE    int
 	SpdDig int
+}
+
+type characterShort struct {
+	Id   int
+	Name string
 }

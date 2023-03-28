@@ -10,6 +10,7 @@ import (
 
 var db *sql.DB
 
+// Connect
 func dbConnect() {
 	fmt.Println("Connecting to Db")
 	cfg := mysql.Config{
@@ -33,6 +34,7 @@ func dbConnect() {
 	fmt.Println("Connected and ready to begin!\n")
 }
 
+// Race table functions
 func getRaces() ([]race, error) {
 	var races []race
 	query := `SELECT * FROM Race`
@@ -93,7 +95,7 @@ func getRaceById(id int) (race, error) {
 func getRaceAttributes(raceId int) (raceAttributes, error) {
 	err := db.Ping()
 	if err != nil {
-		return raceAttributes{}, err
+		return raceAttributes{}, fmt.Errorf("raceAttributePing: %v", err)
 	}
 
 	var raceAttributes raceAttributes
@@ -114,6 +116,7 @@ func getRaceAttributes(raceId int) (raceAttributes, error) {
 	return raceAttributes, nil
 }
 
+// Character table functions
 func saveCharacter(newChar character) (int64, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO palladium.Character
@@ -122,7 +125,6 @@ func saveCharacter(newChar character) (int64, error) {
 		newChar.Name, newChar.RaceId, newChar.Lvl, newChar.IQ, newChar.ME, newChar.MA, newChar.PS,
 		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.PPE, newChar.SpdDig)
 
-	fmt.Println(query)
 	result, err := db.Exec(query)
 	if err != nil {
 		return 0, fmt.Errorf("newCharInsert: %v", err)
@@ -132,4 +134,92 @@ func saveCharacter(newChar character) (int64, error) {
 		return 0, fmt.Errorf("newCharLastInsertId: %v", err)
 	}
 	return id, nil
+}
+
+func getCharacterCount() (int, error) {
+	charCount := 0
+	err := db.Ping()
+	if err != nil {
+		return charCount, fmt.Errorf("getCharCountPing: %v", err)
+	}
+	query := fmt.Sprintf(`
+		SELECT COUNT(c.Id)
+		FROM palladium.Character c;`)
+
+	err = db.QueryRow(query).Scan(&charCount)
+	if err != nil {
+		return charCount, fmt.Errorf("getCharCountSelect: %v", err)
+	}
+	return charCount, nil
+}
+
+func getCharacterNames() ([]characterShort, error) {
+	var characters []characterShort
+	query := fmt.Sprintf(`
+		SELECT c.ID, c.Name
+		FROM palladium.Character c;`)
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("getCharnamesSelect: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var character characterShort
+		if err := rows.Scan(&character.Id, &character.Name); err != nil {
+			return nil, fmt.Errorf("getCharNamesScan: %v", err)
+		}
+		characters = append(characters, character)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("getCharnamesFinal: %v", err)
+	}
+	return characters, nil
+}
+
+func getCharacterById(id int) (character, error) {
+	var character character
+	err := db.Ping()
+	if err != nil {
+		return character, err
+	}
+
+	query := fmt.Sprintf(`
+		SELECT c.Id, c.Name, c.RaceId, r.Name as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.SpdDig
+		FROM palladium.Character c
+			JOIN palladium.Race r on r.Id = c.RaceId
+		WHERE c.Id = %d`, id)
+
+	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
+		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
+		&character.Spd, &character.PPE, &character.SpdDig)
+	if err != nil {
+		return character, fmt.Errorf("characterByIdScan: %v", err)
+	}
+
+	return character, nil
+}
+
+func getCharacterByName(name string) (character, error) {
+	var character character
+	err := db.Ping()
+	if err != nil {
+		return character, err
+	}
+
+	query := fmt.Sprintf(`
+		SELECT c.Id, c.Name, c.RaceId, r.Name as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.SpdDig
+		FROM palladium.Character c
+			JOIN palladium.Race r on r.Id = c.RaceId
+		WHERE c.Name = '%s'`, name)
+
+	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
+		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
+		&character.Spd, &character.PPE, &character.SpdDig)
+	if err != nil {
+		return character, fmt.Errorf("characterByIdScan: %v", err)
+	}
+
+	return character, nil
 }
