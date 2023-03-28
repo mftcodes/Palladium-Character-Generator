@@ -8,4 +8,4 @@ Learning the basics and syntax of the Go programming language by creating a cons
   * `cd` into `docker`
   * run `docker-compose up` to bring up the database
   * use your favorite method to create db tables and insert data from the `docker/db-dump/initDb.sql` file
-* Should not be able to run from rood directory with `go run .`
+* Should now be able to run from rood directory with `go run .`
