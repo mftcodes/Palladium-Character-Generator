@@ -13,58 +13,6 @@ func builder() {
 	d6 := 6
 	d4 := 4
 
-	numberCharactersSaved, err := getCharacterCount()
-	if err != nil {
-		fmt.Printf("error getting character count: %v \n", err)
-		fmt.Errorf("characterCount: %v", err)
-		os.Exit(1)
-	}
-
-	if numberCharactersSaved > 0 {
-		fmt.Printf("You have %d characters saved.\n", numberCharactersSaved)
-		fmt.Printf("Type a name to search for a character by name.\n")
-		fmt.Printf("Press 1 to list all characters and select one from the list.\n")
-		fmt.Printf("Press 2 to create a new character.\n")
-	}
-	fmt.Scanln(&choice)
-
-	if choice == "2" {
-		goto buildCharacter
-	} else if choice == "1" {
-		characters, err := getCharacterNames()
-		if err != nil {
-			fmt.Printf("error getting character names: %v \n", err)
-			fmt.Errorf("characterNames: %v", err)
-			os.Exit(1)
-		}
-		fmt.Printf("Here is your list of characters:\n")
-		for _, character := range characters {
-			fmt.Printf("Press %d to see stats for %s\n", character.Id, character.Name)
-		}
-		fmt.Scanln(&choice)
-		charId, _ := strconv.Atoi(choice)
-		character, err := getCharacterById(charId)
-		if err != nil {
-			fmt.Printf("error getting character by id: %v \n", err)
-			fmt.Errorf("characterById: %v", err)
-			os.Exit(1)
-		}
-		fmt.Printf("\nHere are your characters attributes:\n")
-		printCharacter(character)
-		os.Exit(1)
-	} else {
-		character, err := getCharacterByName(choice)
-		if err != nil {
-			fmt.Printf("error getting character by name: %v \n", err)
-			fmt.Errorf("characterByName: %v", err)
-			os.Exit(1)
-		}
-		fmt.Printf("\nHere are your characters attributes:\n")
-		printCharacter(character)
-		os.Exit(1)
-	}
-
-buildCharacter:
 	races, err := getRaces()
 	if err != nil {
 		fmt.Errorf("GettingRacesBombed: %v", err)
@@ -150,25 +98,4 @@ buildCharacter:
 	}
 
 	fmt.Printf("New Character saved with id %d\n", newCharId)
-}
-
-func printCharacter(character character) {
-	fmt.Printf("Name: %s \n", character.Name)
-	fmt.Printf("Race: %s \n", character.Race)
-	fmt.Printf("Level: %d \n", character.Lvl)
-	fmt.Printf("IQ: %d \n", character.IQ)
-	fmt.Printf("ME: %d \n", character.ME)
-	fmt.Printf("MA: %d \n", character.MA)
-	fmt.Printf("PS: %d \n", character.PS)
-	fmt.Printf("PP: %d \n", character.PP)
-	fmt.Printf("PE: %d \n", character.PE)
-	fmt.Printf("PB: %d \n", character.PB)
-	fmt.Printf("Spd: %d \n", character.Spd)
-	fmt.Printf("HP: %d \n", character.HP)
-	fmt.Printf("PPE: %d \n", character.PPE)
-
-	isDigger := character.SpdDig != 0
-	if isDigger {
-		fmt.Printf("Spd Digging: %d \n", character.SpdDig)
-	}
 }
