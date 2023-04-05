@@ -22,6 +22,8 @@ func starter() string {
 		fmt.Printf("Type a name to search for a character by name.\n")
 		fmt.Printf("Press 1 to list all characters and select one from the list.\n")
 		fmt.Printf("Press 2 to create a new character.\n")
+	} else {
+		fmt.Printf("No characters saved at yet, so let's go to the builder! Press 'Y' when ready: ")
 	}
 	fmt.Scanln(&choice)
 

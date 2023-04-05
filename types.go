@@ -2,7 +2,7 @@ package main
 
 type race struct {
 	Id   int
-	Name string
+	Desc string
 }
 
 type raceAttributes struct { // provide majority of base stats
@@ -26,6 +26,7 @@ type raceAttributes struct { // provide majority of base stats
 	SpdBonus    int    //
 	PPE         int    // Potential Psychic  Energy
 	PPEBonus    int    //
+	HF			int	   // Horror Factor
 	Alignment   string //
 	SpdDig      int    // Speed Digging
 	SpdDigBonus int    // Speed Digging Bonus
@@ -47,6 +48,7 @@ type character struct {
 	Spd    int
 	HP     int
 	PPE    int
+	HF	   int	   // Horror Factor
 	SpdDig int
 }
 
@@ -54,3 +56,4 @@ type characterShort struct {
 	Id   int
 	Name string
 }
+

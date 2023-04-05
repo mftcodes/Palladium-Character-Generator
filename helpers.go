@@ -18,6 +18,7 @@ func printCharacter(character character) {
 	fmt.Printf("Spd: %d \n", character.Spd)
 	fmt.Printf("HP: %d \n", character.HP)
 	fmt.Printf("PPE: %d \n", character.PPE)
+	fmt.Printf("HF: %d \n", character.HF)
 
 	isDigger := character.SpdDig != 0
 	if isDigger {

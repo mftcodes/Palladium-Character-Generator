@@ -47,7 +47,7 @@ func getRaces() ([]race, error) {
 
 	for rows.Next() {
 		var race race
-		if err := rows.Scan(&race.Id, &race.Name); err != nil {
+		if err := rows.Scan(&race.Id, &race.Desc); err != nil {
 			return nil, fmt.Errorf("raceScan: %v", err)
 		}
 		races = append(races, race)
@@ -65,9 +65,9 @@ func getRaceByName(name string) (race, error) {
 	}
 
 	var race race
-	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Name = %s`, name)
+	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Desc = %s`, name)
 
-	err = db.QueryRow(query).Scan(&race.Id, &race.Name)
+	err = db.QueryRow(query).Scan(&race.Id, &race.Desc)
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
@@ -84,7 +84,7 @@ func getRaceById(id int) (race, error) {
 	var race race
 	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Id = %d`, id)
 
-	err = db.QueryRow(query).Scan(&race.Id, &race.Name)
+	err = db.QueryRow(query).Scan(&race.Id, &race.Desc)
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
@@ -108,7 +108,7 @@ func getRaceAttributes(raceId int) (raceAttributes, error) {
 		&raceAttributes.ME, &raceAttributes.MEBonus, &raceAttributes.MA, &raceAttributes.MABonus, &raceAttributes.PS,
 		&raceAttributes.PSBonus, &raceAttributes.PP, &raceAttributes.PPBonus, &raceAttributes.PE, &raceAttributes.PEBonus,
 		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE,
-		&raceAttributes.PPEBonus, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
+		&raceAttributes.PPEBonus, &raceAttributes.HF, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
 	if err != nil {
 		return raceAttributes, fmt.Errorf("raceAttributeSelect: %v", err)
 	}
@@ -186,14 +186,14 @@ func getCharacterById(id int) (character, error) {
 	}
 
 	query := fmt.Sprintf(`
-		SELECT c.Id, c.Name, c.RaceId, r.Name as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.SpdDig
+		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.HF, c.SpdDig
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
 		WHERE c.Id = %d`, id)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.SpdDig)
+		&character.Spd, &character.PPE, &character.HF ,&character.SpdDig)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
@@ -209,14 +209,14 @@ func getCharacterByName(name string) (character, error) {
 	}
 
 	query := fmt.Sprintf(`
-		SELECT c.Id, c.Name, c.RaceId, r.Name as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.SpdDig
+		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.HF c.SpdDig
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
 		WHERE c.Name = '%s'`, name)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.SpdDig)
+		&character.Spd, &character.PPE, &character.HF, &character.SpdDig)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
