@@ -12,7 +12,7 @@ var db *sql.DB
 
 // Connect
 func dbConnect() {
-	fmt.Println("Connecting to Db")
+	// fmt.Println("Connecting to Db")
 	cfg := mysql.Config{
 		User:   "root",
 		Passwd: "pcg0superfun",
@@ -31,7 +31,7 @@ func dbConnect() {
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-	fmt.Println("Connected and ready to begin!\n")
+	// fmt.Println("Connected and ready to begin!\n")
 }
 
 // Race table functions
@@ -47,7 +47,7 @@ func getRaces() ([]race, error) {
 
 	for rows.Next() {
 		var race race
-		if err := rows.Scan(&race.Id, &race.Name); err != nil {
+		if err := rows.Scan(&race.Id, &race.Desc); err != nil {
 			return nil, fmt.Errorf("raceScan: %v", err)
 		}
 		races = append(races, race)
@@ -65,9 +65,9 @@ func getRaceByName(name string) (race, error) {
 	}
 
 	var race race
-	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Name = %s`, name)
+	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Desc = %s`, name)
 
-	err = db.QueryRow(query).Scan(&race.Id, &race.Name)
+	err = db.QueryRow(query).Scan(&race.Id, &race.Desc)
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
@@ -84,7 +84,7 @@ func getRaceById(id int) (race, error) {
 	var race race
 	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Id = %d`, id)
 
-	err = db.QueryRow(query).Scan(&race.Id, &race.Name)
+	err = db.QueryRow(query).Scan(&race.Id, &race.Desc)
 	if err != nil {
 		return race, fmt.Errorf("raceSelectByName: %v", err)
 	}
@@ -108,7 +108,7 @@ func getRaceAttributes(raceId int) (raceAttributes, error) {
 		&raceAttributes.ME, &raceAttributes.MEBonus, &raceAttributes.MA, &raceAttributes.MABonus, &raceAttributes.PS,
 		&raceAttributes.PSBonus, &raceAttributes.PP, &raceAttributes.PPBonus, &raceAttributes.PE, &raceAttributes.PEBonus,
 		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE,
-		&raceAttributes.PPEBonus, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
+		&raceAttributes.PPEBonus, &raceAttributes.HF, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
 	if err != nil {
 		return raceAttributes, fmt.Errorf("raceAttributeSelect: %v", err)
 	}
@@ -120,10 +120,10 @@ func getRaceAttributes(raceId int) (raceAttributes, error) {
 func saveCharacter(newChar character) (int64, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO palladium.Character
-		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, PPE, SpdDig)
-		VALUES('%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d);`,
+		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, HP, PPE, HF, SpdDig)
+		VALUES('%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d);`,
 		newChar.Name, newChar.RaceId, newChar.Lvl, newChar.IQ, newChar.ME, newChar.MA, newChar.PS,
-		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.PPE, newChar.SpdDig)
+		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.HP, newChar.PPE, newChar.HF, newChar.SpdDig)
 
 	result, err := db.Exec(query)
 	if err != nil {
@@ -186,14 +186,16 @@ func getCharacterById(id int) (character, error) {
 	}
 
 	query := fmt.Sprintf(`
-		SELECT c.Id, c.Name, c.RaceId, r.Name as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.SpdDig
+		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB,
+			   c.Spd, c.HP, c.PPE, c.HF, c.SpdDig, c.OccId, o.Desc as OccDesc
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
+			JOIN palladium.OCC o on o.Id = c.OccId
 		WHERE c.Id = %d`, id)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.SpdDig)
+		&character.Spd, &character.HP, &character.PPE, &character.HF, &character.SpdDig, &character.OccId, &character.OccDesc)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
@@ -209,17 +211,63 @@ func getCharacterByName(name string) (character, error) {
 	}
 
 	query := fmt.Sprintf(`
-		SELECT c.Id, c.Name, c.RaceId, r.Name as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.SpdDig
+		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB,
+			c.Spd, c.HP, c.PPE, c.HF, c.SpdDig, c.OccId, o.Desc as OccDesc
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
+			JOIN palladium.OCC o on o.Id = c.OccId
 		WHERE c.Name = '%s'`, name)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.SpdDig)
+		&character.Spd, &character.HF, &character.PPE, &character.HF, &character.SpdDig, &character.OccId, &character.OccDesc)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
 
 	return character, nil
+}
+
+func getOccsByRace(raceId int) ([]occ, error) {
+	var occs []occ
+
+	query := fmt.Sprintf(`
+		SELECT o.Id, ot.Desc as Type, o.Desc
+		FROM palladium.Race_OCC ro
+			LEFT JOIN palladium.OCC o on o.Id = ro.OccId 
+			JOIN palladium.OCCType ot on ot.Id = o.OCCTypeId 
+		WHERE ro.RaceId = %d
+		ORDER BY Type, o.Desc;`, raceId)
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return occs, fmt.Errorf("getOccsByRaceSelect: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var occ occ
+		if err := rows.Scan(&occ.Id, &occ.Type, &occ.Desc); err != nil {
+			return occs, fmt.Errorf("getOccsByRaceScan: %v", err)
+		}
+		occs = append(occs, occ)
+	}
+	if err := rows.Err(); err != nil {
+		return occs, fmt.Errorf("getOccsByRaceFinal: %v", err)
+	}
+	return occs, nil
+}
+
+func saveOcc(characterId int64, occId int) (int64, error) {
+	query := fmt.Sprintf(`
+		UPDATE palladium.Character
+		SET OccId=%d
+		WHERE Id=%d;`, occId, characterId)
+
+	_, err := db.Exec(query)
+	if err != nil {
+		fmt.Printf("updateChar: %v", err)
+		return 0, fmt.Errorf("updateChar: %v", err)
+	}
+	return characterId, nil
 }
