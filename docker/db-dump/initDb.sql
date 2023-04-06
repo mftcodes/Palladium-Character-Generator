@@ -51,28 +51,6 @@ CREATE TABLE IF NOT EXISTS `RaceAttributes` (
   REFERENCES Race(Id)
 );
 
-DROP TABLE IF EXISTS `Character`;
-CREATE TABLE IF NOT EXISTS `Character` (
-  `Id` INT NOT NULL AUTO_INCREMENT,
-  `Name` VARCHAR(25) NOT NULL,
-  `RaceId` INT NOT NULL,
-  `Lvl` SMALLINT NOT NULL DEFAULT 1,
-  `IQ` SMALLINT NOT NULL DEFAULT 0,
-  `ME` SMALLINT NOT NULL DEFAULT 0,
-  `MA` SMALLINT NOT NULL DEFAULT 0,
-  `PS` SMALLINT NOT NULL DEFAULT 0,
-  `PP` SMALLINT NOT NULL DEFAULT 0,
-  `PE` SMALLINT NOT NULL DEFAULT 0,
-  `PB` SMALLINT NOT NULL DEFAULT 0,
-  `Spd` SMALLINT NOT NULL DEFAULT 0,
-  `PPE` SMALLINT NOT NULL DEFAULT 0,
-  `HF`  SMALLINT NOT NULL DEFAULT 0,
-  `SpdDig` SMALLINT NOT NULL DEFAULT 0,
-  PRIMARY KEY (Id),
-  CONSTRAINT FK__Character__Race FOREIGN KEY (RaceId)
-  REFERENCES Race(Id)
-);
-
 DROP TABLE IF EXISTS `OCCType`;
 CREATE TABLE IF NOT EXISTS `OCCType` (
   `Id`    INT NOT NULL AUTO_INCREMENT,
@@ -88,6 +66,32 @@ CREATE TABLE IF NOT EXISTS `OCC` (
   PRIMARY KEY (Id),
   CONSTRAINT FK__OCC__OCCType FOREIGN KEY (OCCTypeId)
   REFERENCES OCCType(Id)
+);
+
+DROP TABLE IF EXISTS `Character`;
+CREATE TABLE IF NOT EXISTS `Character` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(25) NOT NULL,
+  `RaceId` INT NOT NULL,
+  `Lvl` SMALLINT NOT NULL DEFAULT 1,
+  `IQ` SMALLINT NOT NULL DEFAULT 0,
+  `ME` SMALLINT NOT NULL DEFAULT 0,
+  `MA` SMALLINT NOT NULL DEFAULT 0,
+  `PS` SMALLINT NOT NULL DEFAULT 0,
+  `PP` SMALLINT NOT NULL DEFAULT 0,
+  `PE` SMALLINT NOT NULL DEFAULT 0,
+  `PB` SMALLINT NOT NULL DEFAULT 0,
+  `Spd` SMALLINT NOT NULL DEFAULT 0,
+  `HP`  SMALLINT NOT NULL DEFAULT 0,
+  `PPE` SMALLINT NOT NULL DEFAULT 0,
+  `HF`  SMALLINT NOT NULL DEFAULT 0,
+  `SpdDig` SMALLINT NOT NULL DEFAULT 0,
+  `OccId` INT NOT NULL DEFAULT 1,
+  PRIMARY KEY (Id),
+  CONSTRAINT FK__Character__Race FOREIGN KEY (RaceId)
+  REFERENCES Race(Id),
+  CONSTRAINT FK__Character__OCC FOREIGN KEY (OccId)
+  REFERENCES OCC(Id)
 );
 
 DROP TABLE IF EXISTS `SkillCategory`;
@@ -144,41 +148,85 @@ CREATE TABLE IF NOT EXISTS `Race_OCC` (
   -- RACE
 
 INSERT INTO palladium.Race (`Desc`)
-VALUES ('Human'), ('Elf'), ('Dwarf'), ('Gnome'), ('Troglodyte'), ('Kobold'), ('Goblin'), 
-	('Hob-Goblin'), ('Orc'), ('Ogre'), ('Troll'), ('Changeling'), ('Wolfen'), ('Coyle');
+VALUES ('Human'),('Elf'),('Dwarf'),('Gnome'),('Troglodyte'),('Kobold'),('Goblin'), 
+	('Hob-Goblin'),('Orc'),('Ogre'),('Troll'),('Changeling'),('Wolfen'),('Coyle');
+
+/* Hold on to these if needed to add to other queries. */
+SET @Human = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human');
+SET @Elf = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf');
+SET @Dwarf = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf');
+SET @Gnome = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome');
+SET @Troglodyte = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte');
+SET @Kobold = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold');
+SET @Goblin = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Goblin');
+SET @Hob-Goblin = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Hob-Goblin');
+SET @Orc = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Orc');
+SET @Ogre = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Ogre');
+SET @Troll = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troll');
+SET @Changeling = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Changeling');
+SET @Wolfen = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Wolfen');
+SET @Coyle = (SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Coyle');
 
 INSERT INTO palladium.RaceAttributes (`RaceId`, `IQ`, `IQBonus`, `ME`, `MEBonus`, `MA`, `MABonus`, `PS`, `PSBonus`, `PP`, `PPBonus`, `PE`, `PEBonus`,
 	`PB`, `PBBonus`, `Spd`, `SpdBonus`, `PPE`, `PPEBonus`,`HF`,  `Alignment`, `SpdDig`, `SpdDigBonus`)
-VALUES 	(1,3,0,3,0,3,0,3,0,3,0,3,0,3,0,3,0,2,0,0,'Any, usually lean toward good and selfish',0,0),
-        (2,3,1,3,0,2,0,3,0,4,0,3,0,5,0,3,0,2,0,0,'Any, usually lean toward good and selfish',0,0),
-        (3,3,0,3,0,2,0,4,6,3,0,4,0,2,2,2,0,2,0,0,'Any, usually lean toward good and selfish',1,0),
-        (4,3,0,1,6,3,4,1,4,4,0,3,6,4,0,2,0,2,0,0,'Any, but most tend to be good or selfish; an evil gnome is a rarity',1,0),
-        (5,2,0,2,0,3,0,4,4,3,6,3,0,2,0,6,0,2,0,0,'Typically anarchist or evil; but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
-        (6,3,0,2,0,3,0,3,3,3,0,3,0,1,6,3,0,4,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
-        (7,2,0,3,0,2,0,3,0,3,6,3,0,2,0,3,0,6,0,0,'Typically anarchist or evil; but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
-        (8,2,0,3,6,2,0,3,0,3,0,3,0,2,0,3,0,4,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
-        (9,2,0,2,0,3,0,3,8,3,0,3,2,2,0,3,0,2,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',0,0),
-        (10,3,0,3,0,2,0,4,4,3,0,3,6,2,0,3,0,3,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',0,0),
-        (11,3,0,2,0,2,0,4,10,4,0,3,6,1,4,2,0,3,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',0,0),
-        (12,3,0,4,6,4,0,3,0,3,0,2,0,2,0,2,0,5,0,0,'Any',0,0),
-        (13,3,0,3,0,2,0,4,1,3,0,3,0,3,0,4,0,3,0,0,'Any, but tend toward principled and aberrant, both alignments with a strong personal code of honor',0,0),
-        (14,3,0,3,0,2,0,3,1,4,1,3,0,3,0,3,0,3,0,0,'Any, but tend toward anarchist and miscreant; the antithesis of the noble Wolfen',0,0);
+VALUES 	((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human'),3,0,3,0,3,0,3,0,3,0,3,0,3,0,3,0,2,0,0,'Any, usually lean toward good and selfish',0,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf'),3,1,3,0,2,0,3,0,4,0,3,0,5,0,3,0,2,0,0,'Any, usually lean toward good and selfish',0,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),3,0,3,0,2,0,4,6,3,0,4,0,2,2,2,0,2,0,0,'Any, usually lean toward good and selfish',1,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),3,0,1,6,3,4,1,4,4,0,3,6,4,0,2,0,2,0,0,'Any, but most tend to be good or selfish; an evil gnome is a rarity',1,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),2,0,2,0,3,0,4,4,3,6,3,0,2,0,6,0,2,0,0,'Typically anarchist or evil; but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),3,0,2,0,3,0,3,3,3,0,3,0,1,6,3,0,4,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Goblin'),2,0,3,0,2,0,3,0,3,6,3,0,2,0,3,0,6,0,0,'Typically anarchist or evil; but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Hob-Goblin'),2,0,3,6,2,0,3,0,3,0,3,0,2,0,3,0,4,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',1,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Orc'),2,0,2,0,3,0,3,8,3,0,3,2,2,0,3,0,2,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',0,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Ogre'),3,0,3,0,2,0,4,4,3,0,3,6,2,0,3,0,3,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',0,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troll'),3,0,2,0,2,0,4,10,4,0,3,6,1,4,2,0,3,0,0,'Typically anarchist or evil, but most player characters are likely to be unprincipled, anarchist, aberrant or even good',0,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Changeling'),3,0,4,6,4,0,3,0,3,0,2,0,2,0,2,0,5,0,0,'Any',0,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Wolfen'),3,0,3,0,2,0,4,1,3,0,3,0,3,0,4,0,3,0,0,'Any, but tend toward principled and aberrant, both alignments with a strong personal code of honor',0,0),
+        ((SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Coyle'),3,0,3,0,2,0,3,1,4,1,3,0,3,0,3,0,3,0,0,'Any, but tend toward anarchist and miscreant; the antithesis of the noble Wolfen',0,0);
 
   --OCC
 INSERT INTO palladium.OCCType (`Desc`)
-VALUES ('Clergy'), ('Men of Arms'), ('Optional'), ('Practitioners of Magic'), ('Psychics');
+VALUES ('NONE'),('Clergy'),
+('Men of Arms'),
+('Optional'),
+('Practitioners of Magic'),
+('Psychics');
 
 INSERT INTO palladium.OCC (`Desc`, `OCCTypeId`)
-VALUES  ('Druid', 1), ('Monk', 1), ('Priest of Light', 1), ('Priest of Darkness', 1),
-        ('Assassin', 2), ('Knight', 2), ('Long Bowman', 2), ('Mercenary Warrior', 2), ('Palladin', 2), ('Ranger', 2), ('Soldier', 2), ('Thief', 2),
-        ('Merchant', 3), ('Noble', 3), ('Scholar', 3), ('Squire', 3), ('Vagabond', 3), ('Peasant', 3), ('Farmer', 3),
-        ('Diabolist', 4), ('Summoner', 4), ('Warlock', 4), ('Witch', 4), ('Wizard', 4);,
-        ('Mind Mage', 5), ('Psi-Healer', 5), ('Psi-Mystic', 5), ('Psychic Sensitive', 5);
+VALUES  ('NONE SELECTED', (SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'NONE')),
+        ('Druid',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Clergy')),
+        ('Monk',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Clergy')),
+        ('Priest of Light',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Clergy')),
+        ('Priest of Darkness',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Clergy')),
+        ('Assassin',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Knight',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Long Bowman',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Mercenary Warrior',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Palladin',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Ranger',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Soldier',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Thief',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Men of Arms')),
+        ('Merchant',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Optional')),
+        ('Noble',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Optional')),
+        ('Scholar',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Optional')),
+        ('Squire',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Optional')),
+        ('Vagabond',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Optional')),
+        ('Peasant',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Optional')),
+        ('Farmer',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Optional')),
+        ('Diabolist',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Practitioners of Magic')),
+        ('Summoner',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Practitioners of Magic')),
+        ('Warlock',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Practitioners of Magic')),
+        ('Witch',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Practitioners of Magic')),
+        ('Wizard',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Practitioners of Magic')),
+        ('Mind Mage',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Psychics')),
+        ('Psi-Healer',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Psychics')),
+        ('Psi-Mystic',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Psychics')),
+        ('Psychic Sensitive',(SELECT ot.Id FROM palladium.OCCType ot WHERE ot.`Desc` = 'Psychics'));
 
   --SKILLS
 INSERT INTO palladium.SkillCategory (`Desc`)
-VALUES  ('Communications & Performing Arts'), ('Domestic'), ('Espionage'), ('Horsemanship'), ('Medical'), ('Military'),
-        ('Physical'), ('Rogue/Thief'), ('Science'), ('Scholar, Noble & Technical'), ('Weapon Proficiencies'), ('Wilderness');
+VALUES  ('Communications & Performing Arts'),('Domestic'),('Espionage'),('Horsemanship'),('Medical'),('Military'),
+        ('Physical'),('Rogue/Thief'),('Science'),('Scholar, Noble & Technical'),('Weapon Proficiencies'),('Wilderness');
 
 INSERT INTO palladium.Skill (`Desc`, `SkillCategoryId`)
 VALUES  ('Cryptography',1),('Dance',1),('Language',1),('Literacy',1),('Mime',1),('Play Musical Instrument',1),('Public Speaking',1),
@@ -212,32 +260,152 @@ VALUES  ('nightvision'),('Underground Tunneling'),('Underground Architecture'),(
         ('Underground Sense of Surface Structure Location'),('Metal Working'),('Recognize Precious Metals & Stones');
 
 INSERT INTO palladium.Race_NaturalAbility (`NaturalAbilityId`, `RaceId`, `BonusInitial`, `BonusPerLevel`, `Value`, `Measurement`, `Note`)
-VALUES  (1,2,0,0,60,'Feet',NULL),
-        (1,3,0,0,90,'Feet',NULL),(2,3,40,5,0,'%',NULL),(3,3,30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,3,40,5,0,'%',NULL),(5,3,30,5,0,'%','-25% if in unfamiliar area'),(6,3,10,0,0,'%','Equal to Field Armorer'),(7,3,10,0,0,'%','Same as Gemology'),
-        (1,4,0,0,90,'Feet',NULL),(2,4,30,5,0,'%',NULL),(3,4,20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,4,30,5,0,'%',NULL),(5,4,20,5,0,'%','-20% if in unfamiliar area'),
-        (1,5,600,0,0,'Feet','day vision 30ft'),(2,5,30,5,0,'%',NULL),(3,5,20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,5,40,5,0,'%',NULL),(5,5,15,5,0,'%','-20% if in unfamiliar area'),
-        (1,6,0,0,400,'Feet','day vision 40ft'),(2,6,40,5,0,'%',NULL),(3,6,30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,6,40,5,0,'%',NULL),(5,6,30,5,0,'%','-25% if in unfamiliar area'),(6,6,10,0,0,'%','Equal to Field Armorer, +10 recognize weapon quality'),
-        (7,6,10,0,0,'%','Same as Gemology, art (limted to jewelry) and gems');
+VALUES  (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf'),0,0,60,'Feet',NULL),
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),0,0,90,'Feet',NULL),(2,3,40,5,0,'%',NULL),(3,3,30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),40,5,0,'%',NULL),(5,3,30,5,0,'%','-25% if in unfamiliar area'),(6,3,10,0,0,'%','Equal to Field Armorer'),(7,3,10,0,0,'%','Same as Gemology'),
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),0,0,90,'Feet',NULL),(2,4,30,5,0,'%',NULL),(3,4,20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),30,5,0,'%',NULL),(5,4,20,5,0,'%','-20% if in unfamiliar area'),
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),600,0,0,'Feet','day vision 30ft'),(2,5,30,5,0,'%',NULL),(3,5,20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),40,5,0,'%',NULL),(5,5,15,5,0,'%','-20% if in unfamiliar area'),
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),0,0,400,'Feet','day vision 40ft'),(2,6,40,5,0,'%',NULL),(3,6,30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),40,5,0,'%',NULL),(5,6,30,5,0,'%','-25% if in unfamiliar area'),(6,6,10,0,0,'%','Equal to Field Armorer, +10 recognize weapon quality'),
+        (7,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),10,0,0,'%','Same as Gemology, art (limted to jewelry) and gems');
         -- stopped after Kobold. 
 
 
 INSERT INTO palladium.Race_OCC (OccId, RaceId)
-VALUES  (1,1),(2,1),(3,1),(4,1),(5,1),(6,1),(7,1),(8,1),(9,1),(10,1),(11,1),(12,1),(13,1),(14,1),(15,1),(16,1),(17,1),
-        (18,1),(19,1),(20,1),(21,1),(22,1),(23,1),(24,1),(25,1),(26,1),(27,1),(28,1),
-        (1,2),(2,2),(3,2),(4,2),(5,2),(6,2),(7,2),(8,2),(9,2),(10,2),(11,2),(12,2),(13,2),(14,2),(15,2),(16,2),(17,2),
-        (18,2),(19,2),(20,2),(21,2),(22,2),(23,2),(24,2),(25,2),(26,2),(27,2),(28,2),
-        (1,3),(2,3),(3,3),(4,3)(5,3),(6,3),(7,3),(8,3),(9,3),(10,3),(11,3),(12,3),(13,3),(14,3),(15,3),(16,3),(17,3),
-        (18,3),(19,3),(25,3),(26,3),(27,3),(28,3),
-        (1,4),(2,4),(3,4),(4,4),(5,4),(8,4),(10,4),(11,4),(12,4),(13,4),(14,4),(15,4),(16,4),(17,4),
-        (18,4),(19,4),(20,4),(21,4),(22,4),(23,4),(24,4),
-        (2,5),(5,5),(8,5),(11,5),(12,5),(17,5),
-        (1,6),(2,6),(3,6),(4,6),(5,6),(8,6),(10,6),(11,6),(12,6),(13,6),(14,6),(15,6),(16,6),(17,6),
-        (18,6),(19,6),(20,6),(21,6),(22,6),(23,6),(24,6),(25,6),(26,6),(27,6),(28,6);
-        -- stopped after Kobold. 
+VALUES  ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Druid'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Monk'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Light'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Darkness'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Assassin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Knight'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Long Bowman'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mercenary Warrior'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Palladin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Ranger'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Soldier'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Thief'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Merchant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Noble'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Scholar'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Squire'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Vagabond'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Peasant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Farmer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Diabolist'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Summoner'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Warlock'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Witch'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Wizard'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mind Mage'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Healer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Mystic'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psychic Sensitive'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Human')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Druid'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Monk'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Light'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Darkness'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Assassin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Knight'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Long Bowman'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mercenary Warrior'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Palladin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Ranger'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Soldier'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Thief'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Merchant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Noble'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Scholar'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Squire'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Vagabond'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Peasant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Farmer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Diabolist'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Summoner'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Warlock'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Witch'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Wizard'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mind Mage'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Healer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Mystic'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psychic Sensitive'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Druid'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Monk'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Light'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Darkness'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Assassin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Knight'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Long Bowman'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mercenary Warrior'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Palladin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Ranger'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Soldier'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Thief'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Merchant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Noble'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Scholar'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Squire'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Vagabond'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Peasant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Farmer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mind Mage'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Healer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Mystic'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psychic Sensitive'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Druid'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Monk'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Light'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Darkness'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Assassin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mercenary Warrior'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Ranger'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Soldier'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Thief'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Merchant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Noble'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Scholar'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Squire'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Vagabond'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Peasant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Farmer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Diabolist'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Summoner'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Warlock'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Witch'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Wizard'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Monk'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Assassin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mercenary Warrior'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Soldier'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Thief'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Vagabond'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Druid'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Monk'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Light'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Priest of Darkness'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Assassin'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mercenary Warrior'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Ranger'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Soldier'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Thief'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Merchant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Noble'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Scholar'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Squire'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Vagabond'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Peasant'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Farmer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Diabolist'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Summoner'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Warlock'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Witch'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Wizard'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Mind Mage'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Healer'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psi-Mystic'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold')),
+        ((SELECT o.Id FROM palladium.OCC o WHERE o.Desc = 'Psychic Sensitive'),(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'));
+                -- stopped after Kobold. 
         
         
 /*  

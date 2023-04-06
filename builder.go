@@ -78,8 +78,7 @@ func builder() (int, int64) {
 	fmt.Printf("\nRolling for PPE with %dD6, with bonus of +%d\n", raceAttributes.PPE, raceAttributes.PPEBonus)
 	newChar.PPE = rollAttributes(isHuman, d6, raceAttributes.PPE, raceAttributes.PPEBonus)
 
-	fmt.Printf("\nRolling for HF with %dD6, with bonus of +%d\n", newChar.HF, 0)
-	newChar.HP = newChar.PE + rollAttributes(isHuman, d6, newChar.Lvl, 0)
+	newChar.HF = 0
 
 	if isHobGoblin {
 		fmt.Printf("\nRolling for Spd Digging with %dD4, with bonus of +%d\n", raceAttributes.SpdDig, raceAttributes.SpdDigBonus)

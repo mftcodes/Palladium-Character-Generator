@@ -24,4 +24,6 @@ func printCharacter(character character) {
 	if isDigger {
 		fmt.Printf("Spd Digging: %d \n", character.SpdDig)
 	}
+
+	fmt.Printf("OCC: %s \n", character.OccDesc)
 }

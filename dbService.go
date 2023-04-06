@@ -12,7 +12,7 @@ var db *sql.DB
 
 // Connect
 func dbConnect() {
-	fmt.Println("Connecting to Db")
+	// fmt.Println("Connecting to Db")
 	cfg := mysql.Config{
 		User:   "root",
 		Passwd: "pcg0superfun",
@@ -31,7 +31,7 @@ func dbConnect() {
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-	fmt.Println("Connected and ready to begin!\n")
+	// fmt.Println("Connected and ready to begin!\n")
 }
 
 // Race table functions
@@ -120,10 +120,10 @@ func getRaceAttributes(raceId int) (raceAttributes, error) {
 func saveCharacter(newChar character) (int64, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO palladium.Character
-		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, PPE, SpdDig)
-		VALUES('%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d);`,
+		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, HP, PPE, HF, SpdDig)
+		VALUES('%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d);`,
 		newChar.Name, newChar.RaceId, newChar.Lvl, newChar.IQ, newChar.ME, newChar.MA, newChar.PS,
-		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.PPE, newChar.SpdDig)
+		newChar.PP, newChar.PE, newChar.PB, newChar.Spd, newChar.HP, newChar.PPE, newChar.HF, newChar.SpdDig)
 
 	result, err := db.Exec(query)
 	if err != nil {
@@ -187,14 +187,15 @@ func getCharacterById(id int) (character, error) {
 
 	query := fmt.Sprintf(`
 		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB,
-			   c.Spd, c.PPE, c.HF, c.SpdDig, c.OccId
+			   c.Spd, c.HP, c.PPE, c.HF, c.SpdDig, c.OccId, o.Desc as OccDesc
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
+			JOIN palladium.OCC o on o.Id = c.OccId
 		WHERE c.Id = %d`, id)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.HF, &character.SpdDig, &character.OccId)
+		&character.Spd, &character.HP, &character.PPE, &character.HF, &character.SpdDig, &character.OccId, &character.OccDesc)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
@@ -211,14 +212,15 @@ func getCharacterByName(name string) (character, error) {
 
 	query := fmt.Sprintf(`
 		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB,
-			   c.Spd, c.PPE, c.HF, c.SpdDig, c.OccId
+			c.Spd, c.HP, c.PPE, c.HF, c.SpdDig, c.OccId, o.Desc as OccDesc
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
+			JOIN palladium.OCC o on o.Id = c.OccId
 		WHERE c.Name = '%s'`, name)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.HF, &character.SpdDig, &character.OccId)
+		&character.Spd, &character.HF, &character.PPE, &character.HF, &character.SpdDig, &character.OccId, &character.OccDesc)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
@@ -235,7 +237,7 @@ func getOccsByRace(raceId int) ([]occ, error) {
 			LEFT JOIN palladium.OCC o on o.Id = ro.OccId 
 			JOIN palladium.OCCType ot on ot.Id = o.OCCTypeId 
 		WHERE ro.RaceId = %d
-		ORDER BY Type, Desc;`, raceId)
+		ORDER BY Type, o.Desc;`, raceId)
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -262,11 +264,9 @@ func saveOcc(characterId int64, occId int) (int64, error) {
 		SET OccId=%d
 		WHERE Id=%d;`, occId, characterId)
 
-	result, err := db.Exec(query)
-	if result != nil {
-		fmt.Println("saveOcc Result: %v", result)
-	}
+	_, err := db.Exec(query)
 	if err != nil {
+		fmt.Printf("updateChar: %v", err)
 		return 0, fmt.Errorf("updateChar: %v", err)
 	}
 	return characterId, nil

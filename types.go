@@ -33,24 +33,25 @@ type raceAttributes struct { // provide majority of base stats
 }
 
 type character struct {
-	Id     int
-	Name   string
-	RaceId int
-	Race   string
-	Lvl    int
-	IQ     int
-	ME     int
-	MA     int
-	PS     int
-	PP     int
-	PE     int
-	PB     int
-	Spd    int
-	HP     int
-	PPE    int
-	HF     int // Horror Factor
-	SpdDig int
-	OccId  int
+	Id      int
+	Name    string
+	RaceId  int
+	Race    string
+	Lvl     int
+	IQ      int
+	ME      int
+	MA      int
+	PS      int
+	PP      int
+	PE      int
+	PB      int
+	Spd     int
+	HP      int
+	PPE     int
+	HF      int // Horror Factor
+	SpdDig  int
+	OccId   int
+	OccDesc string
 }
 
 type characterShort struct {
