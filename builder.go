@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func builder() {
+func builder() (int, int64) {
 	dbConnect()
 
 	var choice string
@@ -36,7 +36,7 @@ func builder() {
 	fmt.Printf("You chose %d to build a %s\n", choiceNum, races[choiceNum-1].Desc)
 
 	raceAttributes, err := getRaceAttributes(choiceNum)
-	fmt.Printf("%+v\n", raceAttributes)
+	// fmt.Printf("%+v\n", raceAttributes)
 
 	fmt.Printf("What level do you want to start at? (Typically 1, 2, or 3)\n")
 	var levelChoice string
@@ -101,4 +101,5 @@ func builder() {
 	}
 
 	fmt.Printf("New Character saved with id %d\n", newCharId)
+	return choiceNum, newCharId
 }

@@ -26,7 +26,7 @@ type raceAttributes struct { // provide majority of base stats
 	SpdBonus    int    //
 	PPE         int    // Potential Psychic  Energy
 	PPEBonus    int    //
-	HF			int	   // Horror Factor
+	HF          int    // Horror Factor
 	Alignment   string //
 	SpdDig      int    // Speed Digging
 	SpdDigBonus int    // Speed Digging Bonus
@@ -48,8 +48,9 @@ type character struct {
 	Spd    int
 	HP     int
 	PPE    int
-	HF	   int	   // Horror Factor
+	HF     int // Horror Factor
 	SpdDig int
+	OccId  int
 }
 
 type characterShort struct {
@@ -57,3 +58,44 @@ type characterShort struct {
 	Name string
 }
 
+type skillCategory struct {
+	Id   int
+	Desc string
+}
+
+type skill struct {
+	Id              int
+	Desc            string
+	SkillCategoryId int
+}
+
+type occType struct {
+	Id   int
+	Desc string
+}
+
+type occ struct {
+	Id   int
+	Type string
+	Desc string
+}
+
+type race_occ struct {
+	OccId  int
+	RaceId int
+}
+
+type naturalAbility struct {
+	Id   int
+	Desc int
+}
+
+type raceNaturalAbility struct {
+	NaturalAbiltyId int
+	RaceId          int
+	BonusInitial    int
+	BonusPerLevel   int
+	Value           int
+	Measurement     string
+	Note            string
+}

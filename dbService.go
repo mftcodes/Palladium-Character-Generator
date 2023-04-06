@@ -186,14 +186,15 @@ func getCharacterById(id int) (character, error) {
 	}
 
 	query := fmt.Sprintf(`
-		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.HF, c.SpdDig
+		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB,
+			   c.Spd, c.PPE, c.HF, c.SpdDig, c.OccId
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
 		WHERE c.Id = %d`, id)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.HF ,&character.SpdDig)
+		&character.Spd, &character.PPE, &character.HF, &character.SpdDig, &character.OccId)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
@@ -209,17 +210,64 @@ func getCharacterByName(name string) (character, error) {
 	}
 
 	query := fmt.Sprintf(`
-		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB, c.Spd, c.PPE, c.HF c.SpdDig
+		SELECT c.Id, c.Name, c.RaceId, r.Desc as Race, c.Lvl, c.IQ, c.ME, c.MA, c.PS, c.PP, c.PE, c.PB,
+			   c.Spd, c.PPE, c.HF, c.SpdDig, c.OccId
 		FROM palladium.Character c
 			JOIN palladium.Race r on r.Id = c.RaceId
 		WHERE c.Name = '%s'`, name)
 
 	err = db.QueryRow(query).Scan(&character.Id, &character.Name, &character.RaceId, &character.Race, &character.Lvl,
 		&character.IQ, &character.ME, &character.MA, &character.PS, &character.PP, &character.PE, &character.PB,
-		&character.Spd, &character.PPE, &character.HF, &character.SpdDig)
+		&character.Spd, &character.PPE, &character.HF, &character.SpdDig, &character.OccId)
 	if err != nil {
 		return character, fmt.Errorf("characterByIdScan: %v", err)
 	}
 
 	return character, nil
+}
+
+func getOccsByRace(raceId int) ([]occ, error) {
+	var occs []occ
+
+	query := fmt.Sprintf(`
+		SELECT o.Id, ot.Desc as Type, o.Desc
+		FROM palladium.Race_OCC ro
+			LEFT JOIN palladium.OCC o on o.Id = ro.OccId 
+			JOIN palladium.OCCType ot on ot.Id = o.OCCTypeId 
+		WHERE ro.RaceId = %d
+		ORDER BY Type, Desc;`, raceId)
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return occs, fmt.Errorf("getOccsByRaceSelect: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var occ occ
+		if err := rows.Scan(&occ.Id, &occ.Type, &occ.Desc); err != nil {
+			return occs, fmt.Errorf("getOccsByRaceScan: %v", err)
+		}
+		occs = append(occs, occ)
+	}
+	if err := rows.Err(); err != nil {
+		return occs, fmt.Errorf("getOccsByRaceFinal: %v", err)
+	}
+	return occs, nil
+}
+
+func saveOcc(characterId int64, occId int) (int64, error) {
+	query := fmt.Sprintf(`
+		UPDATE palladium.Character
+		SET OccId=%d
+		WHERE Id=%d;`, occId, characterId)
+
+	result, err := db.Exec(query)
+	if result != nil {
+		fmt.Println("saveOcc Result: %v", result)
+	}
+	if err != nil {
+		return 0, fmt.Errorf("updateChar: %v", err)
+	}
+	return characterId, nil
 }
