@@ -42,7 +42,8 @@ CHOOSE:
 			os.Exit(1)
 		}
 	} else {
-		fmt.Println("\nLet's try that again.\n")
+		fmt.Println("\nLet's try that again.")
+		fmt.Println("")
 		goto CHOOSE
 	}
 	return characterIdUpdated
