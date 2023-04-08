@@ -9,33 +9,15 @@ import (
 func builder() (int, int64) {
 	dbConnect()
 
-	var choice string
 	d6 := 6
 	d4 := 4
 
-	races, err := getRaces()
-	if err != nil {
-		fmt.Errorf("GettingRacesBombed: %v", err)
-		os.Exit(1)
-	}
-
-	var characterName string
-	fmt.Println("Let's building a character! First please type in a name.")
-	fmt.Scanln(&characterName)
+	characterName := setCharacterName()
 	fmt.Printf("Great! You're new character will be named %s!\n", characterName)
-	fmt.Println("Now please pick a race.")
 
-	for _, race := range races {
-		fmt.Printf("Press %d for %s\n", race.Id, race.Desc)
-	}
-	fmt.Scanln(&choice)
+	isHuman, isHobGoblin, raceId, raceDesc := setCharacterRace()
 
-	choiceNum, _ := strconv.Atoi(choice)
-	isHuman := choiceNum == 1
-	isHobGoblin := choiceNum == 8
-	fmt.Printf("You chose %d to build a %s\n", choiceNum, races[choiceNum-1].Desc)
-
-	raceAttributes, err := getRaceAttributes(choiceNum)
+	raceAttributes, err := getRaceAttributes(raceId)
 	// fmt.Printf("%+v\n", raceAttributes)
 
 	fmt.Printf("What level do you want to start at? (Typically 1, 2, or 3)\n")
@@ -45,8 +27,8 @@ func builder() (int, int64) {
 
 	var newChar character
 	newChar.Name = characterName
-	newChar.RaceId = choiceNum
-	newChar.Race = races[choiceNum-1].Desc
+	newChar.RaceId = raceId
+	newChar.Race = raceDesc
 	newChar.Lvl = level
 	fmt.Printf("\nRolling for IQ with %dD6, with bonus of +%d\n", raceAttributes.IQ, raceAttributes.IQBonus)
 	newChar.IQ = rollAttributes(isHuman, d6, raceAttributes.IQ, raceAttributes.IQBonus)
@@ -100,5 +82,5 @@ func builder() (int, int64) {
 	}
 
 	fmt.Printf("New Character saved with id %d\n", newCharId)
-	return choiceNum, newCharId
+	return raceId, newCharId
 }

@@ -153,11 +153,12 @@ func getCharacterCount() (int, error) {
 	return charCount, nil
 }
 
-func getCharacterNames() ([]characterShort, error) {
+func getCharactersShort() ([]characterShort, error) {
 	var characters []characterShort
 	query := fmt.Sprintf(`
-		SELECT c.ID, c.Name
-		FROM palladium.Character c;`)
+		SELECT c.ID, c.Name, r.Desc as Race
+		FROM palladium.Character c
+			JOIN palladium.Race r on r.Id = c.RaceId;`)
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -167,7 +168,7 @@ func getCharacterNames() ([]characterShort, error) {
 
 	for rows.Next() {
 		var character characterShort
-		if err := rows.Scan(&character.Id, &character.Name); err != nil {
+		if err := rows.Scan(&character.Id, &character.Name, &character.Race); err != nil {
 			return nil, fmt.Errorf("getCharNamesScan: %v", err)
 		}
 		characters = append(characters, character)

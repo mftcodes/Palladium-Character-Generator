@@ -15,7 +15,9 @@ func main() {
 	var character character
 
 	fmt.Println("Welcome to Palladium Fantasy Character Builder!")
-	fmt.Println("")
+	fmt.Println("Just a simple application to help you quickly set-up a new character.")
+	fmt.Println()
+
 	for strings.ToLower(keepGoing) == "y" {
 		startChoice := starter()
 		if startChoice == "2" || strings.ToLower(startChoice) == "y" {

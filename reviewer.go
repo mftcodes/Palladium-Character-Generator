@@ -13,7 +13,7 @@ func reviewer(choice string) character {
 	var err error
 
 	if choice == "1" {
-		characters, err = getCharacterNames()
+		characters, err = getCharactersShort()
 		if err != nil {
 			fmt.Printf("error getting character names: %v \n", err)
 			fmt.Errorf("characterNames: %v", err)
@@ -21,7 +21,7 @@ func reviewer(choice string) character {
 		}
 		fmt.Printf("Here is your list of characters:\n")
 		for _, _character := range characters {
-			fmt.Printf("Press %d to see stats for %s\n", _character.Id, _character.Name)
+			fmt.Printf("Press %d to see stats the %s named %s\n", _character.Id, _character.Race, _character.Name)
 		}
 		fmt.Scanln(&choice)
 		charId, _ := strconv.Atoi(choice)

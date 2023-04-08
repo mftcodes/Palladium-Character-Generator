@@ -57,6 +57,7 @@ type character struct {
 type characterShort struct {
 	Id   int
 	Name string
+	Race string
 }
 
 type skillCategory struct {
