@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"golang.org/x/exp/slices"
 )
@@ -28,7 +29,7 @@ func starter() string {
 		fmt.Printf("OR press 2 to create a new character.\n")
 		fmt.Printf("Type your answer here then press 'Enter': ")
 	} else {
-		fmt.Printf("No characters saved at yet, so let's go to the builder! Press 'Y' when ready: ")
+		fmt.Printf("No characters saved at yet, would you like to build one now? (Y/n) ")
 	}
 	fmt.Scanln(&choice)
 	fmt.Println()
@@ -42,9 +43,8 @@ func setCharacterName() (string) {
 	fmt.Printf("Let's building a character!\nFirst we need a name, limited to first, last, or first, middle, last at this time.\n")
 	fmt.Printf("Type the name of your character: ")
 	fmt.Scanln(&first, &middle, &last)
-	characterName := fmt.Sprintf("%s %s %s", first, middle, last)
+	characterName := strings.TrimSpace(fmt.Sprintf("%s %s %s", first, middle, last))
 	fmt.Printf("Great! You're new character will be named %s\n", characterName)
-	fmt.Println("Now please pick a race.")
 	return characterName
 }
 
