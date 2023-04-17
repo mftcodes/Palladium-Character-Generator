@@ -20,7 +20,7 @@ func occser(raceId int, characterId int64) int64 {
 		os.Exit(1)
 	}
 
-CHOOSE:
+ChooseOcc:
 	for _, occ := range occs {
 		fmt.Printf("Press %d to see stats for %s: %s\n", occ.Id, occ.Type, occ.Desc)
 	}
@@ -42,8 +42,9 @@ CHOOSE:
 			os.Exit(1)
 		}
 	} else {
-		fmt.Println("\nLet's try that again.\n")
-		goto CHOOSE
+		fmt.Println("\nLet's try that again.")
+		fmt.Println()
+		goto ChooseOcc
 	}
 	return characterIdUpdated
 }
