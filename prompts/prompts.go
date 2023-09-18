@@ -1,4 +1,4 @@
-package main
+package prompts
 
 import (
 	"fmt"
@@ -6,15 +6,17 @@ import (
 	"strconv"
 	"strings"
 
+	"PALLADIUM_FCG/dbservice"
+	"PALLADIUM_FCG/types"
 	"golang.org/x/exp/slices"
 )
 
-func starter() string {
-	dbConnect()
+func Starter() string {
+	dbservice.Connect()
 
 	choice := "y"
 
-	numberCharactersSaved, err := getCharacterCount()
+	numberCharactersSaved, err := dbservice.GetCharacterCount()
 	if err != nil {
 		fmt.Printf("error getting character count: %v \n", err)
 		fmt.Errorf("characterCount: %v", err)
@@ -37,7 +39,7 @@ func starter() string {
 	return choice
 }
 
-func setCharacterName() (string) {
+func SetCharacterName() string {
 	var first, middle, last string
 
 	fmt.Printf("Let's building a character!\nFirst we need a name, limited to first, last, or first, middle, last at this time.\n")
@@ -48,9 +50,9 @@ func setCharacterName() (string) {
 	return characterName
 }
 
-func setCharacterRace() (bool, bool, int, string) {
+func SetCharacterRace() (bool, bool, int, string) {
 	choice := "11" //defaults to troll ( ͡ ͜ʖ ͡ )
-	races, err := getRaces()
+	races, err := dbservice.GetRaces()
 	if err != nil {
 		fmt.Errorf("GettingRacesBombed: %v", err)
 		os.Exit(1)
@@ -68,7 +70,7 @@ SetRace:
 	choiceNum, _ := strconv.Atoi(choice)
 	isHuman := choiceNum == 1
 	isHobGoblin := choiceNum == 8
-	raceIndex := slices.IndexFunc(races, func(r race) bool { return r.Id == choiceNum})
+	raceIndex := slices.IndexFunc(races, func(r types.Race) bool { return r.Id == choiceNum })
 	raceDesc := races[raceIndex].Desc
 
 	fmt.Printf("You chose %d to build a %s\n", choiceNum, raceDesc)
@@ -76,7 +78,7 @@ SetRace:
 	fmt.Printf("If this is correct? (Y/n) ")
 	fmt.Scanln(&choice)
 
-	if choice != "y"{
+	if choice != "y" {
 		goto SetRace
 	}
 

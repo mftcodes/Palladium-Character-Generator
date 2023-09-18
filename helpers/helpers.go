@@ -1,10 +1,12 @@
-package main
+package helpers
 
 import (
 	"fmt"
+
+	"PALLADIUM_FCG/types"
 )
 
-func printCharacter(character character) {
+func PrintCharacter(character types.Character) {
 	fmt.Printf("Name: %s \n", character.Name)
 	fmt.Printf("Race: %s \n", character.Race)
 	fmt.Printf("Level: %d \n", character.Lvl)
