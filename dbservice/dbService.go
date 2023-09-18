@@ -1,17 +1,18 @@
-package main
+package dbservice
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
 
+	"PALLADIUM_FCG/types"
 	"github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB
 
 // Connect
-func dbConnect() {
+func Connect() {
 	// fmt.Println("Connecting to Db")
 	cfg := mysql.Config{
 		User:   "root",
@@ -35,8 +36,7 @@ func dbConnect() {
 }
 
 // Race table functions
-func getRaces() ([]race, error) {
-	var races []race
+func GetRaces() (races []types.Race, err error) {
 	query := `SELECT * FROM Race`
 
 	rows, err := db.Query(query)
@@ -46,7 +46,7 @@ func getRaces() ([]race, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var race race
+		var race types.Race
 		if err := rows.Scan(&race.Id, &race.Desc); err != nil {
 			return nil, fmt.Errorf("raceScan: %v", err)
 		}
@@ -58,13 +58,12 @@ func getRaces() ([]race, error) {
 	return races, nil
 }
 
-func getRaceByName(name string) (race, error) {
-	err := db.Ping()
+func GetRaceByName(name string) (race types.Race, err error) {
+	err = db.Ping()
 	if err != nil {
-		return race{}, err
+		return types.Race{}, err
 	}
 
-	var race race
 	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Desc = %s`, name)
 
 	err = db.QueryRow(query).Scan(&race.Id, &race.Desc)
@@ -75,13 +74,12 @@ func getRaceByName(name string) (race, error) {
 	return race, nil
 }
 
-func getRaceById(id int) (race, error) {
-	err := db.Ping()
+func GetRaceById(id int) (race types.Race, err error) {
+	err = db.Ping()
 	if err != nil {
-		return race{}, err
+		return types.Race{}, err
 	}
 
-	var race race
 	query := fmt.Sprintf(`SELECT * FROM Race r WHERE r.Id = %d`, id)
 
 	err = db.QueryRow(query).Scan(&race.Id, &race.Desc)
@@ -92,32 +90,35 @@ func getRaceById(id int) (race, error) {
 	return race, nil
 }
 
-func getRaceAttributes(raceId int) (raceAttributes, error) {
-	err := db.Ping()
+func GetRaceAttributes(raceId int) (raceAttr types.RaceAttr, err error) {
+	err = db.Ping()
 	if err != nil {
-		return raceAttributes{}, fmt.Errorf("raceAttributePing: %v", err)
+		return raceAttr, fmt.Errorf("raceAttributePing: %v", err)
 	}
 
-	var raceAttributes raceAttributes
 	query := fmt.Sprintf(`
 		SELECT  ra.*
 		FROM RaceAttributes ra
-		WHERE ra.RaceId =  + %d`, raceId)
+		WHERE ra.RaceId = '%d'`, raceId)
 
-	err = db.QueryRow(query).Scan(&raceAttributes.Id, &raceAttributes.RaceId, &raceAttributes.IQ, &raceAttributes.IQBonus,
-		&raceAttributes.ME, &raceAttributes.MEBonus, &raceAttributes.MA, &raceAttributes.MABonus, &raceAttributes.PS,
-		&raceAttributes.PSBonus, &raceAttributes.PP, &raceAttributes.PPBonus, &raceAttributes.PE, &raceAttributes.PEBonus,
-		&raceAttributes.PB, &raceAttributes.PBBonus, &raceAttributes.Spd, &raceAttributes.SpdBonus, &raceAttributes.PPE,
-		&raceAttributes.PPEBonus, &raceAttributes.HF, &raceAttributes.Alignment, &raceAttributes.SpdDig, &raceAttributes.SpdDigBonus)
+	fmt.Printf("\n***********************\nQUERY:\n%s\n",query)
+
+	err = db.QueryRow(query).Scan(&raceAttr.Id, &raceAttr.RaceId, &raceAttr.IQ, &raceAttr.IQBonus,
+		&raceAttr.ME, &raceAttr.MEBonus, &raceAttr.MA, &raceAttr.MABonus, &raceAttr.PS,
+		&raceAttr.PSBonus, &raceAttr.PP, &raceAttr.PPBonus, &raceAttr.PE, &raceAttr.PEBonus,
+		&raceAttr.PB, &raceAttr.PBBonus, &raceAttr.Spd, &raceAttr.SpdBonus, &raceAttr.PPE,
+		&raceAttr.PPEBonus, &raceAttr.HF, &raceAttr.Alignment, &raceAttr.SpdDig, &raceAttr.SpdDigBonus)
 	if err != nil {
-		return raceAttributes, fmt.Errorf("raceAttributeSelect: %v", err)
+		fmt.Printf("ERROR: %w", err)
+		return raceAttr, fmt.Errorf("raceAttributeSelect: %v", err)
 	}
 
-	return raceAttributes, nil
+	fmt.Printf("TYPE: %T\nTheGoods:%t", raceAttr, raceAttr)
+	return raceAttr, nil
 }
 
 // Character table functions
-func saveCharacter(newChar character) (int64, error) {
+func SaveCharacter(newChar types.Character) (id int64, err error) {
 	query := fmt.Sprintf(`
 		INSERT INTO palladium.Character
 		(Name, RaceId, Lvl, IQ, ME, MA, PS, PP, PE, PB, Spd, HP, PPE, HF, SpdDig)
@@ -129,16 +130,16 @@ func saveCharacter(newChar character) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("newCharInsert: %v", err)
 	}
-	id, err := result.LastInsertId()
+	id, err = result.LastInsertId()
 	if err != nil {
 		return 0, fmt.Errorf("newCharLastInsertId: %v", err)
 	}
 	return id, nil
 }
 
-func getCharacterCount() (int, error) {
-	charCount := 0
-	err := db.Ping()
+func GetCharacterCount() (charCount int, err error) {
+	charCount = 0
+	err = db.Ping()
 	if err != nil {
 		return charCount, fmt.Errorf("getCharCountPing: %v", err)
 	}
@@ -153,8 +154,8 @@ func getCharacterCount() (int, error) {
 	return charCount, nil
 }
 
-func getCharactersShort() ([]characterShort, error) {
-	var characters []characterShort
+func GetCharactersShort() ([]types.CharacterShort, error) {
+	var characters []types.CharacterShort
 	query := fmt.Sprintf(`
 		SELECT c.ID, c.Name, r.Desc as Race
 		FROM palladium.Character c
@@ -167,7 +168,7 @@ func getCharactersShort() ([]characterShort, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var character characterShort
+		var character types.CharacterShort
 		if err := rows.Scan(&character.Id, &character.Name, &character.Race); err != nil {
 			return nil, fmt.Errorf("getCharNamesScan: %v", err)
 		}
@@ -179,9 +180,8 @@ func getCharactersShort() ([]characterShort, error) {
 	return characters, nil
 }
 
-func getCharacterById(id int) (character, error) {
-	var character character
-	err := db.Ping()
+func GetCharacterById(id int) (character types.Character, err error) {
+	err = db.Ping()
 	if err != nil {
 		return character, err
 	}
@@ -204,9 +204,8 @@ func getCharacterById(id int) (character, error) {
 	return character, nil
 }
 
-func getCharacterByName(name string) (character, error) {
-	var character character
-	err := db.Ping()
+func GetCharacterByName(name string) (character types.Character, err error) {
+	err = db.Ping()
 	if err != nil {
 		return character, err
 	}
@@ -229,8 +228,7 @@ func getCharacterByName(name string) (character, error) {
 	return character, nil
 }
 
-func getOccsByRace(raceId int) ([]occ, error) {
-	var occs []occ
+func GetOccsByRace(raceId int) (occs []types.Occ, err error) {
 
 	query := fmt.Sprintf(`
 		SELECT o.Id, ot.Desc as Type, o.Desc
@@ -247,7 +245,7 @@ func getOccsByRace(raceId int) ([]occ, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var occ occ
+		var occ types.Occ
 		if err := rows.Scan(&occ.Id, &occ.Type, &occ.Desc); err != nil {
 			return occs, fmt.Errorf("getOccsByRaceScan: %v", err)
 		}
@@ -259,7 +257,7 @@ func getOccsByRace(raceId int) ([]occ, error) {
 	return occs, nil
 }
 
-func saveOcc(characterId int64, occId int) (int64, error) {
+func SaveOcc(characterId int64, occId int) (int64, error) {
 	query := fmt.Sprintf(`
 		UPDATE palladium.Character
 		SET OccId=%d

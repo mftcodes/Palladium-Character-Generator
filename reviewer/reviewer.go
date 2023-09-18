@@ -1,19 +1,22 @@
-package main
+package reviewer
 
 import (
 	"fmt"
 	"os"
 	"strconv"
+
+	"PALLADIUM_FCG/dbservice"
+	"PALLADIUM_FCG/helpers"
+	"PALLADIUM_FCG/types"
 )
 
-func reviewer(choice string) character {
-	dbConnect()
-	var characters []characterShort
-	var character character
+func Reviewer(choice string) (character types.Character) {
+	dbservice.Connect()
+	var characters []types.CharacterShort
 	var err error
 
 	if choice == "1" {
-		characters, err = getCharactersShort()
+		characters, err = dbservice.GetCharactersShort()
 		if err != nil {
 			fmt.Printf("error getting character names: %v \n", err)
 			fmt.Errorf("characterNames: %v", err)
@@ -25,7 +28,7 @@ func reviewer(choice string) character {
 		}
 		fmt.Scanln(&choice)
 		charId, _ := strconv.Atoi(choice)
-		character, err = getCharacterById(charId)
+		character, err = dbservice.GetCharacterById(charId)
 		if err != nil {
 			fmt.Printf("Character of ID %s was not found.", choice)
 			fmt.Printf("error getting character by id: %v \n", err)
@@ -33,10 +36,10 @@ func reviewer(choice string) character {
 			// os.Exit(1)
 		} else {
 			fmt.Printf("\nHere are your characters attributes:\n")
-			printCharacter(character)
+			helpers.PrintCharacter(character)
 		}
 	} else {
-		character, err = getCharacterByName(choice)
+		character, err = dbservice.GetCharacterByName(choice)
 		if err != nil {
 			fmt.Printf("%s was not found.", choice)
 			fmt.Printf("error getting character by name: %v \n", err)
@@ -44,7 +47,7 @@ func reviewer(choice string) character {
 			// os.Exit(1)
 		} else {
 			fmt.Printf("\nHere are your characters attributes:\n")
-			printCharacter(character)
+			helpers.PrintCharacter(character)
 		}
 	}
 

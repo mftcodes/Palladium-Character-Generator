@@ -1,4 +1,4 @@
-package main
+package roller
 
 import (
 	"fmt"
@@ -6,12 +6,7 @@ import (
 	"time"
 )
 
-func random(min int, max int) int {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(max-min) + min
-}
-
-func rollAttributes(isHuman bool, sides, numDice, bonus int) int {
+func RollAttributes(isHuman bool, sides, numDice, bonus int) int {
 	total := 0
 
 	for i := 1; i <= numDice; i++ {
@@ -40,4 +35,9 @@ func exceptionalRoll(sides int, isHuman bool) int {
 	}
 	fmt.Printf("Rolled %d will be added to your attribute.\n", roll)
 	return roll
+}
+
+func random(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
 }

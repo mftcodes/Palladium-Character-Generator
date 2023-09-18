@@ -1,11 +1,11 @@
-package main
+package types
 
-type race struct {
+type Race struct {
 	Id   int
 	Desc string
 }
 
-type raceAttributes struct { // provide majority of base stats
+type RaceAttr struct { // provide majority of base stats
 	Id          int
 	RaceId      int    //
 	IQ          int    //  Intelligence Quotient
@@ -32,7 +32,7 @@ type raceAttributes struct { // provide majority of base stats
 	SpdDigBonus int    // Speed Digging Bonus
 }
 
-type character struct {
+type Character struct {
 	Id      int
 	Name    string
 	RaceId  int
@@ -54,45 +54,45 @@ type character struct {
 	OccDesc string
 }
 
-type characterShort struct {
+type CharacterShort struct {
 	Id   int
 	Name string
 	Race string
 }
 
-type skillCategory struct {
+type SkillCategory struct {
 	Id   int
 	Desc string
 }
 
-type skill struct {
+type Skill struct {
 	Id              int
 	Desc            string
 	SkillCategoryId int
 }
 
-type occType struct {
+type OccType struct {
 	Id   int
 	Desc string
 }
 
-type occ struct {
+type Occ struct {
 	Id   int
 	Type string
 	Desc string
 }
 
-type race_occ struct {
+type RaceOcc struct {
 	OccId  int
 	RaceId int
 }
 
-type naturalAbility struct {
+type NaturalAbility struct {
 	Id   int
 	Desc int
 }
 
-type raceNaturalAbility struct {
+type RaceNaturalAbility struct {
 	NaturalAbiltyId int
 	RaceId          int
 	BonusInitial    int

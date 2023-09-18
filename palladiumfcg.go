@@ -3,6 +3,12 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"PALLADIUM_FCG/builder"
+	"PALLADIUM_FCG/occ"
+	"PALLADIUM_FCG/prompts"
+	"PALLADIUM_FCG/reviewer"
+	"PALLADIUM_FCG/types"
 )
 
 func main() {
@@ -12,22 +18,22 @@ func main() {
 	characterId = -1
 	var raceId int
 	raceId = -1
-	var character character
+	var character types.Character
 
 	fmt.Println("Welcome to Palladium Fantasy Character Builder!")
 	fmt.Println("Just a simple application to help you quickly set-up a new character.")
 	fmt.Println()
 
 	for strings.ToLower(keepGoing) == "y" {
-		startChoice := starter()
+		startChoice := prompts.Starter()
 		if startChoice == "2" || strings.ToLower(startChoice) == "y" {
-			raceId, characterId = builder()
-			charId := occser(raceId, characterId)
+			raceId, characterId = builder.Builder()
+			charId := occ.Occser(raceId, characterId)
 			if charId != characterId {
 				fmt.Println("Oh schnikes, something's amiss")
 			}
 		} else {
-			character = reviewer(startChoice)
+			character = reviewer.Reviewer(startChoice)
 			characterId = int64(character.Id)
 			raceId = character.RaceId
 
@@ -36,7 +42,7 @@ func main() {
 				fmt.Scanln(&choice)
 
 				if strings.ToLower(choice) == "y" {
-					charId := occser(raceId, characterId)
+					charId := occ.Occser(raceId, characterId)
 					if charId != characterId {
 						fmt.Println("Oh schnikes, something's amiss")
 					}
