@@ -5,11 +5,11 @@ import (
 	"os"
 	"strconv"
 
-	"PALLADIUM_FCG/dbservice"
-	"PALLADIUM_FCG/helpers"
-	"PALLADIUM_FCG/prompts"
-	"PALLADIUM_FCG/roller"
-	"PALLADIUM_FCG/types"
+	"pfcg/dbservice"
+	"pfcg/helpers"
+	"pfcg/prompts"
+	"pfcg/roller"
+	"pfcg/types"
 )
 
 func Builder() (raceId int, characterId int64) {
@@ -22,10 +22,9 @@ func Builder() (raceId int, characterId int64) {
 	fmt.Printf("Great! You're new character will be named %s!\n", characterName)
 
 	isHuman, isHobGoblin, raceId, raceDesc := prompts.SetCharacterRace()
-	fmt.Printf("\n******************************\n\nRaceId = %d\n\n", raceId)
 
 	raceAttr, err := dbservice.GetRaceAttributes(raceId)
-	fmt.Printf("%+v\n\n", raceAttr)
+	// fmt.Printf("%+v\n\n", raceAttr)
 
 	fmt.Printf("What level do you want to start at? (Typically 1, 2, or 3)\n")
 	var levelChoice string

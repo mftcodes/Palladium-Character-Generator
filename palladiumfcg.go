@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"PALLADIUM_FCG/builder"
-	"PALLADIUM_FCG/occ"
-	"PALLADIUM_FCG/prompts"
-	"PALLADIUM_FCG/reviewer"
-	"PALLADIUM_FCG/types"
+	"pfcg/builder"
+	"pfcg/occ"
+	"pfcg/prompts"
+	"pfcg/reviewer"
+	"pfcg/types"
 )
 
 func main() {

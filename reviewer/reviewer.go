@@ -5,9 +5,9 @@ import (
 	"os"
 	"strconv"
 
-	"PALLADIUM_FCG/dbservice"
-	"PALLADIUM_FCG/helpers"
-	"PALLADIUM_FCG/types"
+	"pfcg/dbservice"
+	"pfcg/helpers"
+	"pfcg/types"
 )
 
 func Reviewer(choice string) (character types.Character) {

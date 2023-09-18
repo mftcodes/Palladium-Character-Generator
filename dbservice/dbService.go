@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"PALLADIUM_FCG/types"
+	"pfcg/types"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -101,19 +101,15 @@ func GetRaceAttributes(raceId int) (raceAttr types.RaceAttr, err error) {
 		FROM RaceAttributes ra
 		WHERE ra.RaceId = '%d'`, raceId)
 
-	fmt.Printf("\n***********************\nQUERY:\n%s\n",query)
-
 	err = db.QueryRow(query).Scan(&raceAttr.Id, &raceAttr.RaceId, &raceAttr.IQ, &raceAttr.IQBonus,
 		&raceAttr.ME, &raceAttr.MEBonus, &raceAttr.MA, &raceAttr.MABonus, &raceAttr.PS,
 		&raceAttr.PSBonus, &raceAttr.PP, &raceAttr.PPBonus, &raceAttr.PE, &raceAttr.PEBonus,
 		&raceAttr.PB, &raceAttr.PBBonus, &raceAttr.Spd, &raceAttr.SpdBonus, &raceAttr.PPE,
 		&raceAttr.PPEBonus, &raceAttr.HF, &raceAttr.Alignment, &raceAttr.SpdDig, &raceAttr.SpdDigBonus)
 	if err != nil {
-		fmt.Printf("ERROR: %w", err)
 		return raceAttr, fmt.Errorf("raceAttributeSelect: %v", err)
 	}
 
-	fmt.Printf("TYPE: %T\nTheGoods:%t", raceAttr, raceAttr)
 	return raceAttr, nil
 }
 

@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"PALLADIUM_FCG/dbservice"
-	"PALLADIUM_FCG/types"
+	"pfcg/dbservice"
+	"pfcg/types"
 )
 
 func Occser(raceId int, characterId int64) int64 {
@@ -35,6 +35,7 @@ ChooseOcc:
 			occ = occs[i]
 		}
 	}
+	choice = "y"
 	fmt.Printf("You chose OCC '%s: %s', is this correct?  (Y/n): ", occ.Type, occ.Desc)
 	fmt.Scanln(&choice)
 	if strings.ToLower(choice) == "y" {

@@ -14,7 +14,7 @@ Learning the basics and syntax of the Go programming language by creating a cons
 ## Build Process
 * Beginning at the repo root, initialize the project
   ```
-  go mod init PALLADIUM_FCG
+  go mod init pfcg
   go mod tidy
   ```
   * This will create the `go.mod` and `go.sum` files
@@ -28,10 +28,16 @@ Learning the basics and syntax of the Go programming language by creating a cons
   ```
   * continue that until you have run a build in all sub-directories
   * the `build` command should finish without any errors
-* Return to the root directory and build
+* Return to the root directory and install
   ```
-  go build .
+  go install pfcg
   ```
-  * you should now have the binary file `PALLADIUM_FCG`
-  * run it with `./PALLADIUM_FCG`
-
+  * You should be able to run the program now with the command
+    ```
+    pfcg
+    ```
+  * If the command is not found, try this first
+    ```
+    export PATH=$PATH:$(dirname $(go list -f '{{.Target}}' .))
+    ```
+  * Alternatively, you can run `go build .` and then run the binary that is created

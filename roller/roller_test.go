@@ -3,7 +3,7 @@ package roller
 import (
 	"testing"
 
-	"PALLADIUM_FCG/roller"
+	"pfcg/roller"
 )
 
 // Test that random number is between or including values specified.

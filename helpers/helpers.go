@@ -3,7 +3,7 @@ package helpers
 import (
 	"fmt"
 
-	"PALLADIUM_FCG/types"
+	"pfcg/types"
 )
 
 func PrintCharacter(character types.Character) {

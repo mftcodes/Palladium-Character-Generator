@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"PALLADIUM_FCG/dbservice"
-	"PALLADIUM_FCG/types"
+	"pfcg/dbservice"
+	"pfcg/types"
 	"golang.org/x/exp/slices"
 )
 
