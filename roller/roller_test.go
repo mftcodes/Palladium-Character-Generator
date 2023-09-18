@@ -2,15 +2,13 @@ package roller
 
 import (
 	"testing"
-
-	"pfcg/roller"
 )
 
 // Test that random number is between or including values specified.
 func TestRandom(t *testing.T) {
 	min := 1
 	max := 2
-	rando := roller.Random(min, max)
+	rando := random(min, max)
 	if !(rando >= min || rando <= min) {
 		t.Errorf(`Not good: %d is not between %d & %d`, rando, min, max)
 	}
@@ -26,7 +24,7 @@ func TestRollAttributesHuman(t *testing.T) {
 	min := 3
 	max := 30
 
-	roll := roller.RollAttributes(isHuman, sides, numDice, bonus)
+	roll := RollAttributes(isHuman, sides, numDice, bonus)
 	if !(roll >= min || roll <= min) {
 		t.Errorf(`Bad Human: %d is not between %d & %d`, roll, min, max)
 	}
@@ -42,7 +40,7 @@ func TestRollAttributesNonHuman(t *testing.T) {
 	min := 2
 	max := 18
 
-	roll := roller.RollAttributes(isHuman, sides, numDice, bonus)
+	roll := RollAttributes(isHuman, sides, numDice, bonus)
 	if !(roll >= min || roll <= min) {
 		t.Errorf(`Bad Human: %d is not between %d & %d`, roll, min, max)
 	}
