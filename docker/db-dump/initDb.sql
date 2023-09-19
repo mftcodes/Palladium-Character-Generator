@@ -263,16 +263,36 @@ VALUES  ('nightvision'),('Underground Tunneling'),('Underground Architecture'),(
 
 INSERT INTO palladium.Race_NaturalAbility (`NaturalAbilityId`, `RaceId`, `BonusInitial`, `BonusPerLevel`, `Value`, `Measurement`, `Note`)
 VALUES  (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Elf'),0,0,60,'Feet',NULL),
-        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),0,0,90,'Feet',NULL),(2,3,40,5,0,'%',NULL),(3,3,30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),40,5,0,'%',NULL),(5,3,30,5,0,'%','-25% if in unfamiliar area'),(6,3,10,0,0,'%','Equal to Field Armorer'),(7,3,10,0,0,'%','Same as Gemology'),
-        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),0,0,90,'Feet',NULL),(2,4,30,5,0,'%',NULL),(3,4,20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),30,5,0,'%',NULL),(5,4,20,5,0,'%','-20% if in unfamiliar area'),
-        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),600,0,0,'Feet','day vision 30ft'),(2,5,30,5,0,'%',NULL),(3,5,20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),40,5,0,'%',NULL),(5,5,15,5,0,'%','-20% if in unfamiliar area'),
-        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),0,0,400,'Feet','day vision 40ft'),(2,6,40,5,0,'%',NULL),(3,6,30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
-        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),40,5,0,'%',NULL),(5,6,30,5,0,'%','-25% if in unfamiliar area'),(6,6,10,0,0,'%','Equal to Field Armorer, +10 recognize weapon quality'),
-        (7,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),10,0,0,'%','Same as Gemology, art (limted to jewelry) and gems');
-        -- stopped after Kobold. 
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),0,0,90,'Feet',NULL),
+        (2,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),40,5,0,'%',NULL),
+        (3,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),40,5,0,'%',NULL),
+        (5,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),30,5,0,'%','-25% if in unfamiliar area'),
+        (6,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Dwarf'),10,0,0,'%','Equal to Field Armorer'),(7,3,10,0,0,'%','Same as Gemology'),
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),0,0,90,'Feet',NULL),
+        (2,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),30,5,0,'%',NULL),
+        (3,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),30,5,0,'%',NULL),
+        (5,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Gnome'),20,5,0,'%','-20% if in unfamiliar area'),
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),600,0,0,'Feet','day vision 30ft'),
+        (2,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),30,5,0,'%',NULL),(3,5,20,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),40,5,0,'%',NULL),
+        (5,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Troglodyte'),15,5,0,'%','-20% if in unfamiliar area'),
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),0,0,400,'Feet','day vision 40ft'),
+        (2,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),40,5,0,'%',NULL),
+        (3,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),30,5,0,'%','detection and deactivation of traps is done at half normal architecture skill level'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),40,5,0,'%',NULL),
+        (5,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),30,5,0,'%','-25% if in unfamiliar area'),
+        (6,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),10,0,0,'%','Equal to Field Armorer, +10 recognize weapon quality'),
+        (7,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Kobold'),10,0,0,'%','Same as Gemology, art (limted to jewelry) and gems')
+        (1,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Goblin'),0,0,90,'Feet','Good day vision'),
+        (2,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Goblin'),30,5,0,'%','Fundamentally the same as for dwarves, only much cruder'),
+        (3,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Goblin'),10,5,0,'%','Fundamentally the same as for dwarves, only much simpler and cruder'),
+        (4,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Goblin'),20,5,0,'%','Fundamentally the same skill as for the dwarf, but less acute'),
+        (5,(SELECT r.Id FROM palladium.Race r WHERE r.`Desc` = 'Goblin'),10,5,0,'%','Judging the approximate relation/proximity to surface structures (natural and artificial) is poor'),
+
+        ;
+        -- stopped after Goblins. 
 
 
 INSERT INTO palladium.Race_OCC (OccId, RaceId)
