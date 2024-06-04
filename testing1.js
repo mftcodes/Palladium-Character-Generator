@@ -13,6 +13,7 @@ class Quiz extends React.Component {
     }
 
     render() {
+        conosle.log("Is this thing on.");
         let question = null;
         if (this.state.correct === null) {
             question = <div>
