@@ -1,4 +1,4 @@
-class Quiz extends React.Component {
+function() {class Quiz extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,5 +39,5 @@ class Quiz extends React.Component {
 ReactDOM.render(
     <Quiz />,
     document.getElementById('quiz')
-);
+);}
 /* Taken from https://meda.io/embed-react-into-an-html-web-page/ temporarily for the sake of learning */
